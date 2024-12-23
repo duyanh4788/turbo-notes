@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int          @id @default(autoincrement()) @map("id") @db.Integer
+  username      String        @map("username") @db.VarChar(100)
+  avatar        String?       @map("avatar") @db.VarChar(255)
+  tokengg        String?       @map("token_gg") @db.VarChar(255)
+  role          UserRole      @default(user) @map("role")
+  email         String?       @unique @map("email") @db.VarChar(255)
+  notesCount     Int?          @default(0) @map("notes_count") @db.Integer
+  status        StatusType?   @default(active) @map("status")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
+  notes         Note[]
+
+  @@index([role], map: "role")
+  @@index([status], map: "status")
+  @@map("users")
+}
+
+model Note {
+  id            Int          @id @default(autoincrement()) @map("id") @db.Integer
+  title        String?       @map("title") @db.VarChar(255)
+  noteType      String        @map("note_type") @db.VarChar(100)
+  status        StatusType?   @default(active) @map("status")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
+  noteDetails   NoteDetails[]
+  userId        Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "userId")
+  @@map("note")
+}
+
+model NoteDetails {
+  id            Int          @id @default(autoincrement()) @map("id") @db.Integer
+  content      String        @map("content") @db.VarChar(100)
+  scheduleTime  DateTime      @default(now()) @map("schedule_time") @db.Timestamp(0)
+  status        StatusType?   @default(active) @map("status")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
+  noteId        Int
+  note      Note     @relation(fields: [noteId], references: [id])
+
+  @@index([noteId], map: "noteId")
+  @@map("note_details")
+}
+
+
+// ENUM
+enum UserRole {
+  user
+  admin
+}
+
+enum StatusType {
+  active
+  pending
+  inactive
+  banned
+  deleted
+}

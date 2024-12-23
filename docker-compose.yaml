@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: postgres-notes
+    restart: always
+    ports:
+      - '5442:5432'
+    environment:
+      - POSTGRESQL_USERNAME=dev
+      - POSTGRESQL_PASSWORD=123456
+      - POSTGRESQL_DATABASE=notes
+    networks:
+      - anhdev
+  redis:
+    image: redis:latest
+    container_name: redis-notes
+    restart: always
+    ports:
+      - '6389:6379'
+    volumes:
+      - redis-notes:/data
+    environment:
+      - REDIS_PASSWORD=123456
+    networks:
+      - anhdev
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $$REDIS_PASSWORD'
+
+networks:
+  anhdev:
+    name: anhdev
+    external: true
+
+volumes:
+  notes-psql:
+  redis-notes:
