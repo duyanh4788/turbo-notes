@@ -6,7 +6,6 @@ import { SwaggerService } from 'packages/share/services/swagger.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(config.USERS_PATH);
-
   /** Config Swagger */
   SwaggerService.build(app, config.SWAGGER_USERS_PATH);
 
