@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { CreateUserDto } from 'src/common/DTO/users.dto';
+import { Helper } from 'packages/utils/helper';
 
 @Injectable()
 export class UserRepository {
     constructor(private readonly prismaService: PrismaService) { }
 
     async create(data: CreateUserDto): Promise<User> {
+        if (data.tokenGg) {
+            data.tokenData = Helper.generateToken(data.email, data.tokenGg)
+        }
         return await this.prismaService.user.create({
             data,
         });
@@ -40,5 +44,13 @@ export class UserRepository {
 
     async getAll(): Promise<User[]> {
         return await this.prismaService.user.findMany();
+    }
+
+    async updateToken(data: User): Promise<User> {
+        data.tokenData = Helper.generateToken(data.email, data.tokenGg)
+        return await this.prismaService.user.update({
+            where: { id: data.id },
+            data,
+        });
     }
 }

@@ -3,14 +3,18 @@ import { UserRole, StatusType } from '@prisma/client';
 
 export class CreateUserDto {
     @IsString()
-    username: string;
+    userName: string;
 
     @IsEmail()
     email: string;
 
     @IsOptional()
     @IsString()
-    tokengg: string;
+    tokenData?: string;
+
+    @IsOptional()
+    @IsString()
+    tokenGg: string;
 
     @IsOptional()
     @IsEnum(UserRole)
@@ -28,11 +32,15 @@ export class CreateUserDto {
 export class UpdateUserDto {
     @IsOptional()
     @IsString()
-    username?: string;
+    userName?: string;
 
     @IsOptional()
     @IsString()
-    tokengg: string;
+    tokenData?: string;
+
+    @IsOptional()
+    @IsString()
+    tokenGg: string;
 
     @IsOptional()
     @IsEnum(UserRole)

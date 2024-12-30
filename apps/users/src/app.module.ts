@@ -4,12 +4,13 @@ import { servicesProvider } from './provider/services.provider';
 import { ShareModule } from 'packages/share/modules/module';
 import { repositoryProvider } from './provider/repository.provider';
 import { PassportModule } from '@nestjs/passport';
-import { GoogleAuthGuard } from './services/google/google-auth-guard.service';
-import { GoogleStrategy } from './services/google/google-strategy.service';
+import { GoogleAuthGuard } from './middleware/google-auth-guard.service';
+import { GoogleStrategy } from './services/google-strategy.service';
+import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 
 @Module({
   imports: [ShareModule, PassportModule],
   controllers: [...controllersProvider],
-  providers: [...servicesProvider, ...repositoryProvider, GoogleAuthGuard, GoogleStrategy],
+  providers: [...servicesProvider, ...repositoryProvider, GoogleAuthGuard, GoogleStrategy, AuthMiddleware],
 })
 export class AppModule { }

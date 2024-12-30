@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { UsersService } from '../users.service';
+import { UsersService } from './users.service';
 import { config } from 'packages/config';
 import { CreateUserDto } from 'src/common/DTO/users.dto';
 
@@ -20,9 +20,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const { emails, displayName, photos } = profile;
 
     const user: CreateUserDto = {
-      username: displayName,
+      userName: displayName,
       email: emails[0].value,
-      tokengg: accessToken
+      tokenGg: accessToken
     };
 
     if (photos && photos[0]?.value) {
