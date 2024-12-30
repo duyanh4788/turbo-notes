@@ -8,8 +8,10 @@ export const config = {
     GG_ID: process.env.GG_ID,
     GG_KEY: process.env.GG_KEY,
     GG_CALLBACK: process.env.GG_CALLBACK,
-    FE_RENDER: process.env.FE_RENDER,
+    DOMAIN_FE: process.env.DOMAIN_FE,
+    DOMAIN_GG: process.env.DOMAIN_GG,
     DATABASE_URL: process.env.DATABASE_URL,
+    API_KEY: process.env.API_KEY,
     REDIS: {
         HOST: process.env.REDIS_HOST,
         PORT: process.env.REDIS_PORT,

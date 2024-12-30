@@ -9,23 +9,24 @@ datasource db {
 
 model User {
   id            Int          @id @default(autoincrement()) @map("id") @db.Integer
-  username      String        @map("username") @db.VarChar(100)
+  userName      String        @map("username") @db.VarChar(100)
   avatar        String?       @map("avatar") @db.VarChar(255)
-  tokengg        String?       @map("token_gg") @db.VarChar(255)
+  tokenData     String?       @map("token_data") @db.VarChar(255)
+  tokenGg       String?       @map("token_gg") @db.VarChar(255)
   role          UserRole      @default(user) @map("role")
   email         String?       @unique @map("email") @db.VarChar(255)
   notesCount     Int?          @default(0) @map("notes_count") @db.Integer
   status        StatusType?   @default(active) @map("status")
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
-  notes         Note[]
+  notes         Notes[]
 
   @@index([role], map: "role")
   @@index([status], map: "status")
   @@map("users")
 }
 
-model Note {
+model Notes {
   id            Int          @id @default(autoincrement()) @map("id") @db.Integer
   title        String?       @map("title") @db.VarChar(255)
   noteType      String        @map("note_type") @db.VarChar(100)
@@ -37,7 +38,7 @@ model Note {
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "userId")
-  @@map("note")
+  @@map("notes")
 }
 
 model NoteDetails {
@@ -48,7 +49,7 @@ model NoteDetails {
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
   noteId        Int
-  note      Note     @relation(fields: [noteId], references: [id])
+  note      Notes     @relation(fields: [noteId], references: [id])
 
   @@index([noteId], map: "noteId")
   @@map("note_details")
