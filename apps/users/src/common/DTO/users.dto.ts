@@ -1,60 +1,75 @@
 import { IsString, IsEmail, IsOptional, IsEnum } from 'class-validator';
 import { UserRole, StatusType } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
-    @IsString()
-    userName: string;
+  @ApiProperty({ required: true })
+  @IsString()
+  userName: string;
 
-    @IsEmail()
-    email: string;
+  @ApiProperty({ required: true })
+  @IsEmail()
+  email: string;
 
-    @IsOptional()
-    @IsString()
-    tokenData?: string;
+  @ApiProperty({ required: true })
+  @IsOptional()
+  @IsString()
+  tokenData?: string;
 
-    @IsOptional()
-    @IsString()
-    tokenGg: string;
+  @ApiProperty({ required: true })
+  @IsOptional()
+  @IsString()
+  tokenGg: string;
 
-    @IsOptional()
-    @IsEnum(UserRole)
-    role?: UserRole;
+  @ApiProperty({ required: true })
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 
-    @IsOptional()
-    @IsString()
-    avatar?: string;
+  @ApiProperty({ required: true })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 
-    @IsOptional()
-    @IsEnum(StatusType)
-    status?: StatusType;
+  @ApiProperty({ required: true })
+  @IsOptional()
+  @IsEnum(StatusType)
+  status?: StatusType;
 }
 
 export class UpdateUserDto {
-    @IsOptional()
-    @IsString()
-    userName?: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  userName?: string;
 
-    @IsOptional()
-    @IsString()
-    tokenData?: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  tokenData?: string;
 
-    @IsOptional()
-    @IsString()
-    tokenGg: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  tokenGg: string;
 
-    @IsOptional()
-    @IsEnum(UserRole)
-    role?: UserRole;
+  @ApiProperty()
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
 
-    @IsOptional()
-    @IsEmail()
-    email?: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
-    @IsOptional()
-    @IsString()
-    avatar?: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 
-    @IsOptional()
-    @IsEnum(StatusType)
-    status?: StatusType;
+  @ApiProperty()
+  @IsOptional()
+  @IsEnum(StatusType)
+  status?: StatusType;
 }

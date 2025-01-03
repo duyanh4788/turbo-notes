@@ -28,8 +28,8 @@ export class RedisService {
   async connect(): Promise<void> {
     if (CONNECT_REDIS.includes(this.redisClient.status)) {
       Logger.log('Redis is already connected');
-      return
-    };
+      return;
+    }
 
     try {
       await this.redisClient.connect();

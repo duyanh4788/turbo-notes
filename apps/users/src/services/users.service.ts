@@ -5,23 +5,23 @@ import { UserRepository } from 'src/repository/users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async created(data: CreateUserDto): Promise<User> {
     if (data.email) {
       const user = await this.userRepository.findByEmail(data.email);
       if (user && !user.tokenData) {
-        return await this.userRepository.updateToken(user)
+        return await this.userRepository.updateToken(user);
       }
       if (user) return user;
     }
-    await this.userRepository.create(data)
+    await this.userRepository.create(data);
   }
 
   async findById(id: number): Promise<User> {
-    const user = await this.userRepository.findById(id)
+    const user = await this.userRepository.findById(id);
     if (!user) {
-      throw new NotFoundException()
+      throw new NotFoundException();
     }
     return user;
   }

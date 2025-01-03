@@ -25,21 +25,26 @@ model User {
   @@index([status], map: "status")
   @@map("users")
 }
-
 model Notes {
-  id            Int          @id @default(autoincrement()) @map("id") @db.Integer
-  title        String?       @map("title") @db.VarChar(255)
-  noteType      String        @map("note_type") @db.VarChar(100)
+  id            Int           @id @default(autoincrement()) @map("id") @db.Integer
+  title         String?       @map("title") @db.VarChar(255)
   status        StatusType?   @default(active) @map("status")
+  parentId      Int?          @map("parent_id") @db.Integer
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
   noteDetails   NoteDetails[]
   userId        Int
-  user      User     @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  
+  // Quan hệ cha-con giữa các Notes
+  parent        Notes?        @relation("NoteChildren", fields: [parentId], references: [id])
+  childrens      Notes[]       @relation("NoteChildren")
 
   @@index([userId], map: "userId")
   @@map("notes")
+  @@unique([id, userId])
 }
+
 
 model NoteDetails {
   id            Int          @id @default(autoincrement()) @map("id") @db.Integer
@@ -68,4 +73,10 @@ enum StatusType {
   inactive
   banned
   deleted
+}
+
+enum NotesType {
+  code
+  string
+  schedule
 }

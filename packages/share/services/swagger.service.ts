@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export class SwaggerService {
-
   static build(app: INestApplication, pathUrl: string) {
     const options = new DocumentBuilder()
       .setTitle('Api document')

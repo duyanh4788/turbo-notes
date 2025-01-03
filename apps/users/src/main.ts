@@ -17,7 +17,9 @@ async function bootstrap() {
 
   await app.listen(config.USERS_PORT, () => {
     console.log(`app listen port: ${config.USERS_PORT}`);
-    console.log(`view swagger http://localhost:${config.USERS_PORT}${config.SWAGGER_USERS_PATH}`);
+    console.log(
+      `view swagger http://localhost:${config.USERS_PORT}${config.SWAGGER_USERS_PATH}`,
+    );
   });
 }
 bootstrap();

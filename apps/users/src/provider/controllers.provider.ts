@@ -1,3 +1,3 @@
-import { UsersController } from "src/controller/users.controller";
+import { UsersController } from 'src/controller/users.controller';
 
-export const controllersProvider = [UsersController]
+export const controllersProvider = [UsersController];

@@ -6,11 +6,15 @@ import { repositoryProvider } from './provider/repository.provider';
 import { PassportModule } from '@nestjs/passport';
 import { GoogleAuthGuard } from './middleware/google-auth-guard.service';
 import { GoogleStrategy } from './services/google-strategy.service';
-import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 
 @Module({
   imports: [ShareModule, PassportModule],
   controllers: [...controllersProvider],
-  providers: [...servicesProvider, ...repositoryProvider, GoogleAuthGuard, GoogleStrategy, AuthMiddleware],
+  providers: [
+    ...servicesProvider,
+    ...repositoryProvider,
+    GoogleAuthGuard,
+    GoogleStrategy,
+  ],
 })
-export class AppModule { }
+export class AppModule {}

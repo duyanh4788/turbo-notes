@@ -6,7 +6,7 @@ import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 @Global()
 @Module({
   imports: [],
-  providers: [RedisService, PrismaService],
-  exports: [RedisService, PrismaService],
+  providers: [RedisService, PrismaService, AuthMiddleware],
+  exports: [RedisService, PrismaService, AuthMiddleware],
 })
-export class ShareModule { }
+export class ShareModule {}

@@ -16,17 +16,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) {
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: VerifyCallback,
+  ) {
     const { emails, displayName, photos } = profile;
 
     const user: CreateUserDto = {
       userName: displayName,
       email: emails[0].value,
-      tokenGg: accessToken
+      tokenGg: accessToken,
     };
 
     if (photos && photos[0]?.value) {
-      user.avatar = photos[0].value
+      user.avatar = photos[0].value;
     }
 
     const payload = await this.usersService.created(user);
