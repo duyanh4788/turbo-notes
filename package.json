@@ -84,5 +84,10 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
   }
 }
