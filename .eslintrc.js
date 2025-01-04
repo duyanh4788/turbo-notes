@@ -26,7 +26,6 @@ module.exports = {
         alwaysTryTypes: true,
         project: './tsconfig.json',
       },
-      extensions: ['.js', '.ts'],
     },
   },
   rules: {
@@ -47,7 +46,7 @@ module.exports = {
     'max-classes-per-file': 'off',
     '@typescript-eslint/naming-convention': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
-    'semi': ['error', 'always'],
+    semi: ['error', 'always'],
     'max-len': ['off'],
   },
 };

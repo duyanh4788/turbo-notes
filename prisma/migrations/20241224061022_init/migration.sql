@@ -16,7 +16,7 @@ DROP TABLE "note";
 -- CreateTable
 CREATE TABLE "notes" (
     "id" SERIAL NOT NULL,
-    "title" VARCHAR(255),
+    "label" VARCHAR(255),
     "note_type" VARCHAR(100) NOT NULL,
     "status" "StatusType" DEFAULT 'active',
     "created_at" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,

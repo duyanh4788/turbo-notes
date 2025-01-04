@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import {
-  ChildNotesDto,
   CNotesDto,
+  ChildNotesDto,
   GANotesDto,
   UNotesDto,
 } from 'src/common/DTO/notes.dto';
@@ -17,14 +17,14 @@ export class NotesRepository {
 
     const total = await this.prismaService.notes.count({
       where: {
-        userId: userId,
+        userId,
         parentId: null,
       },
     });
 
     const notes = await this.prismaService.notes.findMany({
       where: {
-        userId: userId,
+        userId,
         parentId: null,
       },
       skip: Number(skip),
@@ -33,11 +33,7 @@ export class NotesRepository {
         createdAt: 'desc',
       },
       include: {
-        childrens: {
-          include: {
-            childrens: true,
-          },
-        },
+        children: true,
       },
     });
 
@@ -45,10 +41,10 @@ export class NotesRepository {
   }
 
   async findById(userId: number, id: number): Promise<Notes | null> {
-    return await this.prismaService.notes.findUnique({
+    return this.prismaService.notes.findUnique({
       where: { id, userId },
       include: {
-        childrens: true,
+        children: true,
       },
     });
   }
@@ -58,14 +54,14 @@ export class NotesRepository {
     payload: CNotesDto | ChildNotesDto,
   ): Promise<Notes> {
     const newData = { ...payload, userId };
-    return await this.prismaService.notes.create({
+    return this.prismaService.notes.create({
       data: newData,
     });
   }
 
   async update(userId: number, payload: UNotesDto): Promise<Notes> {
     const { id } = payload;
-    return await this.prismaService.notes.update({
+    return this.prismaService.notes.update({
       where: { id, userId },
       data: payload,
     });
@@ -75,6 +71,5 @@ export class NotesRepository {
     await this.prismaService.notes.delete({
       where: { id, userId },
     });
-    return;
   }
 }

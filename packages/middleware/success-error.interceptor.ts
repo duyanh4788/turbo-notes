@@ -13,14 +13,12 @@ import { catchError, map } from 'rxjs/operators';
 export class SuccessErrorInterceptor implements NestInterceptor {
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((data) => {
-        return {
-          status: TypeResponse.SUCCESS,
-          code: HttpStatus.OK,
-          data: data,
-          message: 'Successfully',
-        };
-      }),
+      map((data) => ({
+        status: TypeResponse.SUCCESS,
+        code: HttpStatus.OK,
+        data,
+        message: 'Successfully',
+      })),
       catchError((err) => {
         throw err;
       }),

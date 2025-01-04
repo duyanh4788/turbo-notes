@@ -18,7 +18,7 @@ export enum NotesType {
 export class CNotesDto {
   @ApiProperty({ required: true })
   @IsString()
-  title: string;
+  label: string;
 }
 
 export class UNotesDto {
@@ -29,7 +29,7 @@ export class UNotesDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  title: string;
+  label: string;
 
   @ApiProperty()
   @IsEnum(StatusType)
@@ -44,7 +44,7 @@ export class ChildNotesDto {
 
   @ApiProperty()
   @IsString()
-  title: string;
+  label: string;
 }
 
 export class GANotesDto {

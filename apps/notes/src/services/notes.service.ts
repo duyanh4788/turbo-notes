@@ -11,20 +11,21 @@ import { NotesRepository } from 'src/repository/notes.repository';
 @Injectable()
 export class NotesService {
   constructor(private readonly userRepository: NotesRepository) {}
+
   async getAll(userId: number, query: GANotesDto): Promise<ResNotes> {
-    return await this.userRepository.getAll(userId, query);
+    return this.userRepository.getAll(userId, query);
   }
 
   async findById(userId: number, id: number): Promise<Notes> {
-    return await this.userRepository.findById(userId, id);
+    return this.userRepository.findById(userId, id);
   }
 
   async created(userId: number, payload: CNotesDto): Promise<Notes> {
-    return await this.userRepository.create(userId, payload);
+    return this.userRepository.create(userId, payload);
   }
 
   async updated(userId: number, payload: UNotesDto): Promise<Notes> {
-    return await this.userRepository.update(userId, payload);
+    return this.userRepository.update(userId, payload);
   }
 
   async deleted(
@@ -44,6 +45,6 @@ export class NotesService {
     if (!note) {
       throw new NotFoundException();
     }
-    return await this.userRepository.create(userId, payload);
+    return this.userRepository.create(userId, payload);
   }
 }
