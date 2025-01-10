@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'packages/share/services/prisma.service';
-import {
-  CNotesDto,
-  ChildNotesDto,
-  GANotesDto,
-  UNotesDto,
-} from 'src/common/DTO/notes.dto';
+import { CNotesDto, ChildNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
+import { PagingDto } from 'src/common/DTO/paging.dto';
 import { Notes, ResNotes } from 'src/common/interface/notes.interface';
 
 @Injectable()
 export class NotesRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAll(userId: number, query: GANotesDto): Promise<ResNotes> {
+  async getAll(userId: number, query: PagingDto): Promise<ResNotes> {
     const { skip = 0, limit = 10 } = query;
 
     const total = await this.prismaService.notes.count({
@@ -30,7 +26,7 @@ export class NotesRepository {
       skip: Number(skip),
       take: Number(limit),
       orderBy: {
-        createdAt: 'desc',
+        sorting: 'asc',
       },
       include: {
         children: true,
@@ -40,11 +36,15 @@ export class NotesRepository {
     return { total, notes };
   }
 
-  async findById(userId: number, id: number): Promise<Notes | null> {
+  async findById(userId: number, id: string): Promise<Notes | null> {
     return this.prismaService.notes.findUnique({
       where: { id, userId },
       include: {
-        children: true,
+        children: {
+          orderBy: {
+            sorting: 'asc',
+          },
+        },
       },
     });
   }
@@ -67,7 +67,7 @@ export class NotesRepository {
     });
   }
 
-  async delete(userId: number, id: number): Promise<void> {
+  async delete(userId: number, id: string): Promise<void> {
     await this.prismaService.notes.delete({
       where: { id, userId },
     });

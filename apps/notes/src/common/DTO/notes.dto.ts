@@ -24,7 +24,7 @@ export class CNotesDto {
 export class UNotesDto {
   @ApiProperty({ required: true })
   @IsInt()
-  id: number;
+  id: string;
 
   @ApiProperty()
   @IsString()
@@ -39,20 +39,10 @@ export class UNotesDto {
 
 export class ChildNotesDto {
   @ApiProperty({ required: true })
-  @IsInt()
-  parentId: number;
+  @IsString()
+  parentId: string;
 
   @ApiProperty()
   @IsString()
   label: string;
-}
-
-export class GANotesDto {
-  @ApiProperty()
-  @IsOptional()
-  skip: number;
-
-  @ApiProperty()
-  @IsOptional()
-  limit: number;
 }

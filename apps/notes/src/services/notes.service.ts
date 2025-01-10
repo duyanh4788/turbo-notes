@@ -1,10 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  ChildNotesDto,
-  CNotesDto,
-  GANotesDto,
-  UNotesDto,
-} from 'src/common/DTO/notes.dto';
+import { ChildNotesDto, CNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
+import { PagingDto } from 'src/common/DTO/paging.dto';
 import { Notes, ResNotes } from 'src/common/interface/notes.interface';
 import { NotesRepository } from 'src/repository/notes.repository';
 
@@ -12,11 +8,11 @@ import { NotesRepository } from 'src/repository/notes.repository';
 export class NotesService {
   constructor(private readonly userRepository: NotesRepository) {}
 
-  async getAll(userId: number, query: GANotesDto): Promise<ResNotes> {
+  async getAll(userId: number, query: PagingDto): Promise<ResNotes> {
     return this.userRepository.getAll(userId, query);
   }
 
-  async findById(userId: number, id: number): Promise<Notes> {
+  async findById(userId: number, id: string): Promise<Notes> {
     return this.userRepository.findById(userId, id);
   }
 
@@ -30,8 +26,8 @@ export class NotesService {
 
   async deleted(
     userId: number,
-    id: number,
-  ): Promise<{ id: number; parentId: number }> {
+    id: string,
+  ): Promise<{ id: string; parentId: string }> {
     const note = await this.findById(userId, id);
     if (!note) {
       throw new NotFoundException();

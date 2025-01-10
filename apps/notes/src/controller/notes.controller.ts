@@ -12,16 +12,12 @@ import {
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
-import {
-  ChildNotesDto,
-  CNotesDto,
-  GANotesDto,
-  UNotesDto,
-} from 'src/common/DTO/notes.dto';
+import { ChildNotesDto, CNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
+import { PagingDto } from 'src/common/DTO/paging.dto';
 import { NotesService } from 'src/services/notes.service';
 
 @ApiTags('Notes')
-@Controller()
+@Controller('notes')
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
@@ -33,7 +29,7 @@ export class NotesController {
 
   @Get()
   @UseGuards(AuthMiddleware)
-  async getAll(@Req() req, @Query() query: GANotesDto) {
+  async getAll(@Req() req, @Query() query: PagingDto) {
     return this.notesService.getAll(req.user.id, query);
   }
 
@@ -53,13 +49,13 @@ export class NotesController {
   @ApiParam({ name: 'id', type: 'string' })
   @UseGuards(AuthMiddleware)
   async deleted(@Req() req, @Param() params: { id: string }) {
-    return this.notesService.deleted(req.user.id, Number(params.id));
+    return this.notesService.deleted(req.user.id, params.id);
   }
 
   @Get(':id')
   @ApiParam({ name: 'id', type: 'string' })
   @UseGuards(AuthMiddleware)
   async get(@Req() req, @Param() params: { id: string }) {
-    return this.notesService.findById(req.user.id, Number(params.id));
+    return this.notesService.findById(req.user.id, params.id);
   }
 }

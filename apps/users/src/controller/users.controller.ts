@@ -4,18 +4,18 @@ import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { GoogleAuthGuard } from 'src/middleware/google-auth-guard.service';
 import { UsersService } from 'src/services/users.service';
 
-@Controller()
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('google')
-  async googleLogin(@Req() _) {
+  async googleLogin() {
     return `${config.DOMAIN_GG}&redirect_uri=${config.GG_CALLBACK}&scope=profile email&client_id=${config.GG_ID}`;
   }
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  async googleAuth(@Req() _) {}
+  async googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)

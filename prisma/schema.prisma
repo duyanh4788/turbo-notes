@@ -26,36 +26,40 @@ model User {
   @@map("users")
 }
 model Notes {
-  id            Int           @id @default(autoincrement()) @map("id") @db.Integer
-  label         String?       @map("label") @db.VarChar(255)
-  status        StatusType?   @default(active) @map("status")
-  itemId        String        @default(dbgenerated("gen_random_uuid()")) @map("item_id") @db.Uuid()
-  parentId      Int?          @map("parent_id") @db.Integer
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @map("id") @db.Uuid
+  label         String        @map("label") @db.VarChar(255)
+  status        StatusType    @default(active) @map("status")
+  type          NoteType      @default(doc) @map("type")
+  parentId      String?       @map("parent_id") @db.Uuid
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
+  sorting       Int           @default(autoincrement()) @map("sorting") @db.Integer
   noteDetails   NoteDetails[]
   userId        Int
   user          User          @relation(fields: [userId], references: [id])
   
-  // Quan hệ cha-con giữa các Notes
   parent        Notes?        @relation("NoteChildren", fields: [parentId], references: [id])
   children      Notes[]       @relation("NoteChildren")
 
   @@index([userId], map: "userId")
+  @@index([parentId], map: "parentId")
   @@map("notes")
   @@unique([id, userId])
 }
 
 
 model NoteDetails {
-  id            Int          @id @default(autoincrement()) @map("id") @db.Integer
-  content      String        @map("content") @db.VarChar(100)
-  scheduleTime  DateTime      @default(now()) @map("schedule_time") @db.Timestamp(0)
-  status        StatusType?   @default(active) @map("status")
-  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
-  noteId        Int
-  note      Notes     @relation(fields: [noteId], references: [id])
+  id            Int             @id @default(autoincrement()) @map("id") @db.Integer
+  title       String          @map("title") @db.VarChar(100)
+  content       String          @map("content") @db.VarChar()
+  scheduleTime  DateTime        @default(now()) @map("schedule_time") @db.Timestamp(0)
+  status        StatusType      @default(active) @map("status")
+  type          NoteDetailType  @default(string) @map("type")
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime        @default(now()) @map("updated_at") @db.Timestamp(0)
+  noteId        String          @map("note_id") @db.Uuid
+  sorting       Int             @default(autoincrement()) @map("sorting") @db.Integer
+  note      Notes               @relation(fields: [noteId], references: [id])
 
   @@index([noteId], map: "noteId")
   @@map("note_details")
@@ -76,8 +80,15 @@ enum StatusType {
   deleted
 }
 
-enum NotesType {
-  code
+enum NoteDetailType {
   string
+  code
   schedule
+}
+
+enum NoteType {
+  doc
+  folder
+  pdf
+  pinned
 }

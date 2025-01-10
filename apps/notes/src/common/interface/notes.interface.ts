@@ -1,15 +1,10 @@
-import {
-  NoteDetails as NoteDetailsPrisma,
-  Notes as NotesPrisma,
-} from '@prisma/client';
-
-export interface ResNotes {
-  notes: Notes[];
-  total: number;
-}
+import { Notes as NotesPrisma } from '@prisma/client';
+import { NoteDetails } from './noteDetails.interface';
 
 export type Notes = {
   noteDetails?: NoteDetails[];
 } & NotesPrisma;
-
-export type NoteDetails = NoteDetailsPrisma;
+export interface ResNotes {
+  notes: Notes[];
+  total: number;
+}
