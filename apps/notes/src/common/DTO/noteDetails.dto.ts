@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NoteDetailType, StatusType } from '@prisma/client';
-import { IsString, IsOptional, IsInt, IsDate, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsInt, IsEnum } from 'class-validator';
 import { PagingDto } from './paging.dto';
 
 export class CNoteDetailsDto {
@@ -14,8 +14,8 @@ export class CNoteDetailsDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsDate()
-  scheduleTime?: Date;
+  @IsString()
+  scheduleTime?: string;
 
   @ApiProperty()
   @IsString()
@@ -37,18 +37,18 @@ export class UNoteDetailsDto {
   content: string;
 
   @ApiProperty()
-  @IsDate()
   @IsOptional()
-  scheduleTime?: Date;
+  @IsString()
+  scheduleTime?: string;
 
   @ApiProperty()
-  @IsEnum(StatusType)
   @IsOptional()
+  @IsEnum(StatusType)
   status?: StatusType;
 
   @ApiProperty()
-  @IsEnum(NoteDetailType)
   @IsOptional()
+  @IsEnum(NoteDetailType)
   type?: NoteDetailType;
 }
 

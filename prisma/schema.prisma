@@ -50,9 +50,9 @@ model Notes {
 
 model NoteDetails {
   id            Int             @id @default(autoincrement()) @map("id") @db.Integer
-  title       String          @map("title") @db.VarChar(100)
+  title         String          @map("title") @db.VarChar(100)
   content       String          @map("content") @db.VarChar()
-  scheduleTime  DateTime        @default(now()) @map("schedule_time") @db.Timestamp(0)
+  scheduleTime  DateTime?       @map("schedule_time") @db.Timestamp(0)
   status        StatusType      @default(active) @map("status")
   type          NoteDetailType  @default(string) @map("type")
   createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)

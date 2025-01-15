@@ -13,7 +13,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import {
   CNoteDetailsDto,
-  ParamsDto,
   QueryDto,
   UNoteDetailsDto,
 } from 'src/common/DTO/noteDetails.dto';
@@ -44,13 +43,13 @@ export class NoteDetailsController {
 
   @Delete(':id')
   @UseGuards(AuthMiddleware)
-  async deleted(@Param() params: ParamsDto) {
-    return this.noteDetailsService.deleted(params);
+  async deleted(@Param('id') id: number, @Query('noteId') noteId: string) {
+    return this.noteDetailsService.deleted({ id, noteId });
   }
 
   @Get(':id')
   @UseGuards(AuthMiddleware)
-  async get(@Param() params: ParamsDto) {
-    return this.noteDetailsService.findById(params);
+  async get(@Param('id') id: number, @Query('noteId') noteId: string) {
+    return this.noteDetailsService.findById({ id, noteId });
   }
 }
