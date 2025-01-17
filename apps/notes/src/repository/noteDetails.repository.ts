@@ -33,7 +33,7 @@ export class NotesDetailsRepository {
       },
     });
 
-    return { total, noteDetails };
+    return { noteDetails, total, noteId };
   }
 
   async findById(params: ParamsDto): Promise<NoteDetails | null> {
