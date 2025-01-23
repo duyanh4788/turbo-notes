@@ -8,3 +8,8 @@ export interface ResNotes {
   notes: Notes[];
   total: number;
 }
+
+export interface CountReq {
+  userId: string;
+  typeCount: string;
+}

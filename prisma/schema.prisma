@@ -16,6 +16,7 @@ model User {
   role          UserRole      @default(user) @map("role")
   email         String?       @unique @map("email") @db.VarChar(255)
   notesCount     Int?          @default(0) @map("notes_count") @db.Integer
+  noteDetailsCount     Int?          @default(0) @map("note_details_count") @db.Integer
   status        StatusType?   @default(active) @map("status")
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)

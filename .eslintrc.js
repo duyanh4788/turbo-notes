@@ -48,5 +48,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
     semi: ['error', 'always'],
     'max-len': ['off'],
+    'no-return-await': 'off',
+    'no-promise-executor-return': 'off',
   },
 };

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,8 +32,8 @@ export class NoteDetailsController {
 
   @Post()
   @UseGuards(AuthMiddleware)
-  async created(@Body() payload: CNoteDetailsDto) {
-    return this.noteDetailsService.created(payload);
+  async created(@Req() req, @Body() payload: CNoteDetailsDto) {
+    return this.noteDetailsService.created(payload, req.user.id);
   }
 
   @Put()
@@ -43,8 +44,12 @@ export class NoteDetailsController {
 
   @Delete(':id')
   @UseGuards(AuthMiddleware)
-  async deleted(@Param('id') id: number, @Query('noteId') noteId: string) {
-    return this.noteDetailsService.deleted({ id, noteId });
+  async deleted(
+    @Req() req,
+    @Param('id') id: number,
+    @Query('noteId') noteId: string,
+  ) {
+    return this.noteDetailsService.deleted({ id, noteId }, req.user.id);
   }
 
   @Get(':id')

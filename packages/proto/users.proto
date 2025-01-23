@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package users;
+
+import "google/protobuf/empty.proto";
+
+service UsersService {
+  rpc CountNotes (CountReq) returns (google.protobuf.Empty);
+  rpc CountNoteDetails (CountReq) returns (google.protobuf.Empty);
+}
+
+message CountReq {
+  string userId = 1;
+  string typeCount = 2;
+}

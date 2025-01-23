@@ -1,6 +1,7 @@
 import { IsString, IsEmail, IsOptional, IsEnum } from 'class-validator';
 import { UserRole, StatusType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { TypeCount } from 'packages/common/constant';
 
 export class CreateUserDto {
   @ApiProperty({ required: true })
@@ -72,4 +73,14 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(StatusType)
   status?: StatusType;
+}
+
+export class CountNoteDto {
+  @ApiProperty()
+  @IsString()
+  userId: number;
+
+  @ApiProperty()
+  @IsEnum(TypeCount)
+  typeCount: TypeCount;
 }

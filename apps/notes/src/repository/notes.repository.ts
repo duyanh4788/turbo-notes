@@ -29,7 +29,8 @@ export class NotesRepository {
         sorting: 'asc',
       },
       include: {
-        children: true,
+        children: { include: { _count: true } },
+        _count: true,
       },
     });
 

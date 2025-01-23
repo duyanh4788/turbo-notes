@@ -1,0 +1,13 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package notes;
+
+service NotesService {
+}
+
+message ExampleRequest {
+}
+
+message ExampleResponse {
+}

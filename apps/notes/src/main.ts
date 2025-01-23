@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { config } from 'packages/config';
 import { SwaggerService } from 'packages/share/services/swagger.service';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SuccessErrorInterceptor } from 'packages/middleware/success-error.interceptor';
+import { config } from 'packages/config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -16,8 +16,8 @@ async function bootstrap() {
   app.enableCors();
 
   await app.listen(config.NOTES_PORT, () => {
-    console.log(`app listen port: ${config.NOTES_PORT}`);
-    console.log(
+    Logger.log(`app Notes listen port: ${config.NOTES_PORT}`);
+    Logger.log(
       `view swagger http://localhost:${config.NOTES_PORT}${config.SWAGGER_NOTES_PATH}`,
     );
   });

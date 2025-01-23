@@ -17,3 +17,14 @@ export enum TypeResponse {
   SUCCESS = 'success',
   ERROR = 'error',
 }
+
+export enum TypeCount {
+  IN_CREASE = 'IN_CREASE',
+  DE_CREASE = 'DE_CREASE',
+}
+
+export enum PackageService {
+  USERS = 'users',
+  NOTES = 'notes',
+  NOTIFICATIONS = 'notifications',
+}

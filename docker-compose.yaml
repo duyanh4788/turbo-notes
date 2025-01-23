@@ -7,6 +7,8 @@ services:
     restart: always
     ports:
       - '5442:5432'
+    volumes:
+      - psql-notes:/data
     environment:
       - POSTGRESQL_USERNAME=dev
       - POSTGRESQL_PASSWORD=123456
@@ -27,11 +29,27 @@ services:
       - anhdev
     command: /bin/sh -c 'redis-server --appendonly yes --requirepass $$REDIS_PASSWORD'
 
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: 'rabbit-notes'
+    ports:
+      - 5682:5672
+      - 15682:15672
+    volumes:
+      - rabbit-notes:/data
+    environment:
+      - RABBITMQ_DEFAULT_USER=dev
+      - RABBITMQ_DEFAULT_PASS=123456
+    restart: always
+    networks:
+      - anhdev
+
 networks:
   anhdev:
     name: anhdev
     external: true
 
 volumes:
-  notes-psql:
+  psql-notes:
   redis-notes:
+  rabbit-notes:

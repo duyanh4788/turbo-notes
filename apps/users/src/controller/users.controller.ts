@@ -1,10 +1,22 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { config } from 'packages/config';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
+import { GrpcInterceptor } from 'packages/middleware/grpc.interceptor';
+import { Observable } from 'rxjs';
+import { CountNoteDto } from 'src/common/DTO/users.dto';
 import { GoogleAuthGuard } from 'src/middleware/google-auth-guard.service';
 import { UsersService } from 'src/services/users.service';
 
-@Controller('users')
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -14,7 +26,7 @@ export class UsersController {
   }
 
   @Get('google')
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards()
   async googleAuth() {}
 
   @Get('google/callback')
@@ -36,5 +48,17 @@ export class UsersController {
   @UseGuards(AuthMiddleware)
   async get(@Req() req) {
     return req.user;
+  }
+
+  @GrpcMethod('UsersService', 'CountNotes')
+  @UseInterceptors(GrpcInterceptor)
+  CountNotes(payload: CountNoteDto): Promise<Observable<void>> {
+    return this.usersService.CountNotes(payload);
+  }
+
+  @GrpcMethod('UsersService', 'CountNoteDetails')
+  @UseInterceptors(GrpcInterceptor)
+  CountNoteDetails(payload: CountNoteDto): Promise<Observable<void>> {
+    return this.usersService.CountNoteDetails(payload);
   }
 }
