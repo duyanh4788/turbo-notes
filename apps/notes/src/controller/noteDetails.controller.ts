@@ -33,13 +33,13 @@ export class NoteDetailsController {
   @Post()
   @UseGuards(AuthMiddleware)
   async created(@Req() req, @Body() payload: CNoteDetailsDto) {
-    return this.noteDetailsService.created(payload, req.user.id);
+    return this.noteDetailsService.created(payload, req.user);
   }
 
   @Put()
   @UseGuards(AuthMiddleware)
-  async updated(@Body() payload: UNoteDetailsDto) {
-    return this.noteDetailsService.updated(payload);
+  async updated(@Req() req, @Body() payload: UNoteDetailsDto) {
+    return this.noteDetailsService.updated(payload, req.user);
   }
 
   @Delete(':id')

@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package notifications;
+
+service NotificationsService {
+    rpc SendNotification (SendNotiReq) returns (google.protobuf.Empty);
+}
+
+message SendNotiReq {
+  string noteDetailId = 1;
+  string scheduleTime = 2;
+  string title = 3;
+  string content = 4;
+  string email = 5;
+  string userName = 6;
+}

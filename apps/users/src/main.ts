@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'packages/config';
 import { SwaggerService } from 'packages/share/services/swagger.service';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SuccessErrorInterceptor } from 'packages/middleware/success-error.interceptor';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { PackageService } from 'packages/common/constant';
@@ -29,8 +29,8 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
   await app.listen(config.USERS_PORT, () => {
-    console.log(`app users is listening on port: ${config.USERS_PORT}`);
-    console.log(
+    Logger.log(`app users is listening on port: ${config.USERS_PORT}`);
+    Logger.log(
       `view swagger http://localhost:${config.USERS_PORT}${config.SWAGGER_USERS_PATH}`,
     );
   });

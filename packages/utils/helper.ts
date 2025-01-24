@@ -17,4 +17,19 @@ export class Helper {
   static getExpirationTime(days: number): number {
     return Math.floor(Date.now() / 1000) + days * 24 * 60 * 60;
   }
+
+  static formatScheduleTime(scheduleTime: string): string {
+    const date = scheduleTime ? new Date(scheduleTime) : new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: 'Asia/Bangkok',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    };
+    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
+    return formattedDate.replace(',', '').replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3');
+  }
 }

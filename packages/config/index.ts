@@ -13,12 +13,12 @@ export const config = {
   NOTES_PATH: process.env.NOTES_PATH,
   NOTES_PORT: process.env.NOTES_PORT,
   SWAGGER_NOTES_PATH: process.env.SWAGGER_NOTES_PATH,
-  GRPC_NOTES_PORT: process.env.GRPC_NOTES_PORT,
-  // notes
+  NOTES_GRPC_HOST: process.env.NOTES_GRPC_HOST,
+  // noti
   NOTI_PORT: process.env.NOTI_PORT,
   NOTI_PATH: process.env.NOTI_PATH,
   SWAGGER_NOTI_PATH: process.env.SWAGGER_NOTI_PATH,
-  GRPC_NOTI_PORT: process.env.GRPC_NOTI_PORT,
+  NOTI_GRPC_HOST: process.env.NOTI_GRPC_HOST,
 
   AUTHEN_KEY: 'x-api-key',
   // google
@@ -46,5 +46,6 @@ export const config = {
   PROTO_PATH: {
     USERS: path.join(process.cwd(), '../../packages', 'proto', 'users.proto'),
     NOTES: path.join(process.cwd(), '../../packages', 'proto', 'notes.proto'),
+    NOTI: path.join(process.cwd(), '../../packages', 'proto', 'notifications.proto'),
   },
 };

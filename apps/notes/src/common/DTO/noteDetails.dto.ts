@@ -27,6 +27,10 @@ export class UNoteDetailsDto {
   id: number;
 
   @ApiProperty()
+  @IsString()
+  noteId: string;
+
+  @ApiProperty()
   @IsOptional()
   @IsString()
   title: string;

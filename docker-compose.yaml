@@ -8,7 +8,7 @@ services:
     ports:
       - '5442:5432'
     volumes:
-      - psql-notes:/data
+      - /root/database/psql/psql-notes:/var/lib/postgresql/data
     environment:
       - POSTGRESQL_USERNAME=dev
       - POSTGRESQL_PASSWORD=123456
@@ -22,7 +22,7 @@ services:
     ports:
       - '6389:6379'
     volumes:
-      - redis-notes:/data
+      - /root/database/redis/redis-notes/data:/data
     environment:
       - REDIS_PASSWORD=123456
     networks:
@@ -30,13 +30,14 @@ services:
     command: /bin/sh -c 'redis-server --appendonly yes --requirepass $$REDIS_PASSWORD'
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:management-alpine
     container_name: 'rabbit-notes'
     ports:
       - 5682:5672
       - 15682:15672
     volumes:
-      - rabbit-notes:/data
+      - /root/database/rabbit/rabbit-notes/data/:/var/lib/rabbit-notes/
+      - /root/database/rabbit/rabbit-notes/log/:/var/log/rabbit-notes/
     environment:
       - RABBITMQ_DEFAULT_USER=dev
       - RABBITMQ_DEFAULT_PASS=123456
