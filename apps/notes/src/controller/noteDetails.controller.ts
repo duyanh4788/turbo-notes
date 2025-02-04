@@ -17,6 +17,7 @@ import {
   QueryDto,
   UNoteDetailsDto,
 } from 'src/common/DTO/noteDetails.dto';
+import { SearchDto } from 'src/common/DTO/paging.dto';
 import { NoteDetailsService } from 'src/services/noteDetails.service';
 
 @ApiTags('Notes Detail')
@@ -24,22 +25,28 @@ import { NoteDetailsService } from 'src/services/noteDetails.service';
 export class NoteDetailsController {
   constructor(private readonly noteDetailsService: NoteDetailsService) {}
 
+  @Get('/search')
+  @UseGuards(AuthMiddleware)
+  async search(@Req() req, @Query() query: SearchDto) {
+    return this.noteDetailsService.searchs(req.user.id, query.text);
+  }
+
   @Get()
   @UseGuards(AuthMiddleware)
-  async getAll(@Query() query: QueryDto) {
-    return this.noteDetailsService.getAll(query);
+  async getAll(@Req() req, @Query() query: QueryDto) {
+    return this.noteDetailsService.getAll(req.user.id, query);
   }
 
   @Post()
   @UseGuards(AuthMiddleware)
   async created(@Req() req, @Body() payload: CNoteDetailsDto) {
-    return this.noteDetailsService.created(payload, req.user);
+    return this.noteDetailsService.created(req.user, payload);
   }
 
   @Put()
   @UseGuards(AuthMiddleware)
   async updated(@Req() req, @Body() payload: UNoteDetailsDto) {
-    return this.noteDetailsService.updated(payload, req.user);
+    return this.noteDetailsService.updated(req.user, payload);
   }
 
   @Delete(':id')
@@ -49,12 +56,16 @@ export class NoteDetailsController {
     @Param('id') id: number,
     @Query('noteId') noteId: string,
   ) {
-    return this.noteDetailsService.deleted({ id, noteId }, req.user.id);
+    return this.noteDetailsService.deleted(req.user.id, { id, noteId });
   }
 
   @Get(':id')
   @UseGuards(AuthMiddleware)
-  async get(@Param('id') id: number, @Query('noteId') noteId: string) {
-    return this.noteDetailsService.findById({ id, noteId });
+  async get(
+    @Req() req,
+    @Param('id') id: number,
+    @Query('noteId') noteId: string,
+  ) {
+    return this.noteDetailsService.findById(req.user.id, { id, noteId });
   }
 }

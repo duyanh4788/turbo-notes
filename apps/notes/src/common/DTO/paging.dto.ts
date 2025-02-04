@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class PagingDto {
   @ApiProperty()
@@ -9,4 +9,10 @@ export class PagingDto {
   @ApiProperty()
   @IsOptional()
   limit: number;
+}
+
+export class SearchDto {
+  @ApiProperty({ required: true })
+  @IsString()
+  text: string;
 }

@@ -21,9 +21,10 @@ model User {
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
   notes         Notes[]
+  noteDetails   NoteDetails[]
 
-  @@index([role], map: "role")
-  @@index([status], map: "status")
+  @@index([role], map: "idx_users_role")
+  @@index([status], map: "idx_users_status")
   @@map("users")
 }
 model Notes {
@@ -35,36 +36,43 @@ model Notes {
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
   sorting       Int           @default(autoincrement()) @map("sorting") @db.Integer
+
   noteDetails   NoteDetails[]
+
   userId        Int
   user          User          @relation(fields: [userId], references: [id])
   
   parent        Notes?        @relation("NoteChildren", fields: [parentId], references: [id])
   children      Notes[]       @relation("NoteChildren")
 
-  @@index([userId], map: "userId")
-  @@index([parentId], map: "parentId")
+  @@index([userId], map: "idx_notes_user_id")
+  @@index([parentId], map: "idx_notes_parentId")
   @@map("notes")
   @@unique([id, userId])
 }
 
 
-model NoteDetails {
-  id            Int             @id @default(autoincrement()) @map("id") @db.Integer
-  title         String          @map("title") @db.VarChar(100)
-  content       String          @map("content") @db.VarChar()
-  scheduleTime  DateTime?       @map("schedule_time") @db.Timestamp(0)
-  status        StatusType      @default(active) @map("status")
-  type          NoteDetailType  @default(string) @map("type")
-  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt     DateTime        @default(now()) @map("updated_at") @db.Timestamp(0)
-  noteId        String          @map("note_id") @db.Uuid
-  sorting       Int             @default(autoincrement()) @map("sorting") @db.Integer
-  note      Notes               @relation(fields: [noteId], references: [id])
+  model NoteDetails {
+    id            Int             @id @default(autoincrement()) @map("id") @db.Integer
+    title         String          @map("title") @db.VarChar(100)
+    content       String          @map("content") @db.VarChar()
+    scheduleTime  DateTime?       @map("schedule_time") @db.Timestamp(0)
+    status        StatusType      @default(active) @map("status")
+    type          NoteDetailType  @default(string) @map("type")
+    createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(0)
+    updatedAt     DateTime        @default(now()) @map("updated_at") @db.Timestamp(0)
+    sorting       Int             @default(autoincrement()) @map("sorting") @db.Integer
 
-  @@index([noteId], map: "noteId")
-  @@map("note_details")
-}
+    noteId        String          @map("note_id") @db.Uuid
+    note          Notes           @relation(fields: [noteId], references: [id])
+
+    userId        Int             @map("user_id") @db.Integer
+    user          User            @relation(fields: [userId], references: [id])
+    
+    @@index([noteId], map: "idx_note_details_note_id")
+    @@index([userId], map: "idx_note_details_user_id")
+    @@map("note_details")
+  }
 
 
 // ENUM

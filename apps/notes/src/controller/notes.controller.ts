@@ -13,13 +13,19 @@ import {
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { ChildNotesDto, CNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
-import { PagingDto } from 'src/common/DTO/paging.dto';
+import { PagingDto, SearchDto } from 'src/common/DTO/paging.dto';
 import { NotesService } from 'src/services/notes.service';
 
 @ApiTags('Notes')
 @Controller('notes')
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
+
+  @Get('/search')
+  @UseGuards(AuthMiddleware)
+  async search(@Req() req, @Query() query: SearchDto) {
+    return this.notesService.searchs(req.user.id, query.text);
+  }
 
   @Post('/child')
   @UseGuards(AuthMiddleware)

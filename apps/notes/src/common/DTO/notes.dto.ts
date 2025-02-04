@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsInt, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum } from 'class-validator';
 
 export enum StatusType {
   ACTIVE = 'active',
@@ -23,7 +23,7 @@ export class CNotesDto {
 
 export class UNotesDto {
   @ApiProperty({ required: true })
-  @IsInt()
+  @IsString()
   id: string;
 
   @ApiProperty()

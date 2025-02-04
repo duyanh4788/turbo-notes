@@ -37,6 +37,24 @@ export class NotesRepository {
     return { total, notes };
   }
 
+  async getByIds(userId: number, ids: string[]): Promise<ResNotes> {
+    const notes = await this.prismaService.notes.findMany({
+      where: {
+        userId,
+        id: { in: ids },
+      },
+      orderBy: {
+        sorting: 'asc',
+      },
+      include: {
+        children: { include: { _count: true } },
+        _count: true,
+      },
+    });
+
+    return { total: notes.length, notes };
+  }
+
   async findById(userId: number, id: string): Promise<Notes | null> {
     return this.prismaService.notes.findUnique({
       where: { id, userId },

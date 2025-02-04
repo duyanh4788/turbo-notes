@@ -4,6 +4,6 @@ export type NoteDetails = NoteDetailsPrisma;
 
 export interface ResNotesDetails {
   noteDetails: NoteDetails[];
-  noteId: string;
+  noteId?: string;
   total: number;
 }

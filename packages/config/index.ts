@@ -48,4 +48,9 @@ export const config = {
     NOTES: path.join(process.cwd(), '../../packages', 'proto', 'notes.proto'),
     NOTI: path.join(process.cwd(), '../../packages', 'proto', 'notifications.proto'),
   },
+  ELAST: {
+    HOST: process.env.ELAST_HOST,
+    USERNAME: process.env.ELAST_USERNAME,
+    PASSWORD: process.env.ELAST_PASSWORD,
+  },
 };

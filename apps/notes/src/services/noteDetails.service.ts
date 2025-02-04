@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { NoteDetailType, User } from '@prisma/client';
-import { TypeCount } from 'packages/common/constant';
+import { IndexSearch, TypeCount } from 'packages/common/constant';
+import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
 import {
   CNoteDetailsDto,
   ParamsDto,
@@ -22,33 +23,52 @@ export class NoteDetailsService {
     private readonly notesDetailsRepository: NotesDetailsRepository,
     private readonly usersGRPC: UsersGRPC,
     private readonly notificationsGRPC: NotificationsGRPC,
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
-  async getAll(query: QueryDto): Promise<ResNotesDetails> {
-    return this.notesDetailsRepository.getAll(query);
+  async searchs(userId: number, text: string): Promise<ResNotesDetails> {
+    const hits = await this.elasticsearchService.search(
+      IndexSearch.NOTE_DETAILS,
+      text,
+    );
+    if (!hits || !hits.length) return { total: 0, noteDetails: [] };
+    const ids = hits.map((x) => Number(x._id));
+    return this.notesDetailsRepository.getByIds(userId, ids);
   }
 
-  async findById(params: ParamsDto): Promise<NoteDetails> {
-    return this.notesDetailsRepository.findById(params);
+  async getAll(userId: number, query: QueryDto): Promise<ResNotesDetails> {
+    return this.notesDetailsRepository.getAll(userId, query);
   }
 
-  async created(payload: CNoteDetailsDto, user: User): Promise<NoteDetails> {
-    const detail = await this.notesDetailsRepository.create(payload);
+  async findById(userId: number, params: ParamsDto): Promise<NoteDetails> {
+    return this.notesDetailsRepository.findById(userId, params);
+  }
+
+  async created(user: User, payload: CNoteDetailsDto): Promise<NoteDetails> {
+    const detail = await this.notesDetailsRepository.create(payload, user.id);
     await this.usersGRPC.CountNoteDetails(user.id, TypeCount.IN_CREASE);
     if (detail.type === NoteDetailType.schedule && detail.scheduleTime) {
       await this.notificationsGRPC.SendNotification(
         this.initPayloadSendNoti(detail, user),
       );
     }
+    await this.elasticsearchService.indexData(
+      IndexSearch.NOTE_DETAILS,
+      detail.id.toString(),
+      detail,
+    );
     return detail;
   }
 
-  async updated(payload: UNoteDetailsDto, user: User): Promise<NoteDetails> {
-    const noteDetail = await this.findById({
+  async updated(user: User, payload: UNoteDetailsDto): Promise<NoteDetails> {
+    const noteDetail = await this.findById(user.id, {
       id: payload.id,
       noteId: payload.noteId,
     });
-    const newDetail = await this.notesDetailsRepository.update(payload);
+    const newDetail = await this.notesDetailsRepository.update(
+      user.id,
+      payload,
+    );
     if (newDetail.type === NoteDetailType.schedule) {
       if (
         noteDetail.scheduleTime.getTime() !== newDetail.scheduleTime.getTime()
@@ -58,17 +78,26 @@ export class NoteDetailsService {
         );
       }
     }
+    await this.elasticsearchService.indexData(
+      IndexSearch.NOTE_DETAILS,
+      newDetail.id.toString(),
+      newDetail,
+    );
     return newDetail;
   }
 
-  async deleted(params: ParamsDto, userId: number): Promise<{ id: number }> {
-    const noteDetail = await this.findById(params);
+  async deleted(userId: number, params: ParamsDto): Promise<{ id: number }> {
+    const noteDetail = await this.findById(userId, params);
     if (!noteDetail) {
       throw new NotFoundException();
     }
     const { id } = params;
-    await this.notesDetailsRepository.delete(id);
+    await this.notesDetailsRepository.delete(userId, id);
     await this.usersGRPC.CountNoteDetails(userId, TypeCount.DE_CREASE);
+    await this.elasticsearchService.deleteData(
+      IndexSearch.NOTE_DETAILS,
+      id.toString(),
+    );
     return { id };
   }
 

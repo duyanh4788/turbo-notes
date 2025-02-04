@@ -28,3 +28,8 @@ export enum PackageService {
   NOTES = 'notes',
   NOTIFICATIONS = 'notifications',
 }
+
+export enum IndexSearch {
+  NOTES = 'notes',
+  NOTE_DETAILS = 'note_details',
+}
