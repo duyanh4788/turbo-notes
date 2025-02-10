@@ -1,28 +1,51 @@
 version: '3'
 
 services:
+  init:
+    image: busybox
+    container_name: init-notes
+    volumes:
+      - /root/deployment/notes:/root/deployment/notes
+    command: >
+      sh -c "
+      mkdir -p /root/deployment/notes/psql-notes &&
+      mkdir -p /root/deployment/notes/redis-notes/data &&
+      mkdir -p /root/deployment/notes/rabbit-notes/data &&
+      mkdir -p /root/deployment/notes/rabbit-notes/log &&
+      mkdir -p /root/deployment/notes/elasticsearch-notes &&
+      chown -R 1000:1000 /root/deployment/notes &&
+      chmod -R 755 /root/deployment/notes
+      "
+    networks:
+      - anhdev
+
   postgres:
     image: bitnami/postgresql:latest
     container_name: postgres-notes
     restart: always
+    depends_on:
+      - init
     ports:
       - '5442:5432'
     volumes:
-      - /root/database/psql/psql-notes:/var/lib/postgresql/data
+      - /root/deployment/notes/psql-notes:/var/lib/postgresql/data
     environment:
       - POSTGRESQL_USERNAME=dev
       - POSTGRESQL_PASSWORD=123456
       - POSTGRESQL_DATABASE=notes
     networks:
       - anhdev
+
   redis:
     image: redis:latest
     container_name: redis-notes
     restart: always
+    depends_on:
+      - init
     ports:
       - '6389:6379'
     volumes:
-      - /root/database/redis/redis-notes/data:/data
+      - /root/deployment/notes/redis-notes/data:/data
     environment:
       - REDIS_PASSWORD=123456
     networks:
@@ -32,12 +55,14 @@ services:
   rabbitmq:
     image: rabbitmq:management-alpine
     container_name: 'rabbit-notes'
+    depends_on:
+      - init
     ports:
       - 5682:5672
       - 15682:15672
     volumes:
-      - /root/database/rabbit/rabbit-notes/data/:/var/lib/rabbit-notes/
-      - /root/database/rabbit/rabbit-notes/log/:/var/log/rabbit-notes/
+      - /root/deployment/notes/rabbit-notes/data/:/var/lib/rabbit-notes/
+      - /root/deployment/notes/rabbit-notes/log/:/var/log/rabbit-notes/
     environment:
       - RABBITMQ_DEFAULT_USER=dev
       - RABBITMQ_DEFAULT_PASS=123456
@@ -45,12 +70,32 @@ services:
     networks:
       - anhdev
 
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: 'elasticsearch-notes'
+    depends_on:
+      - init
+    ports:
+      - 9201:9200
+      - 9301:9300
+    volumes:
+      - /root/deployment/notes/elasticsearch-notes:/usr/share/elasticsearch/data:Z
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=4ef0ndj0objssfdgsmdmp4kr3g2si5qj
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - anhdev
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
 networks:
   anhdev:
     name: anhdev
     external: true
-
-volumes:
-  psql-notes:
-  redis-notes:
-  rabbit-notes:

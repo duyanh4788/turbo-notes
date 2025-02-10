@@ -45,7 +45,14 @@ module.exports = {
     'class-methods-use-this': 'off',
     'max-classes-per-file': 'off',
     '@typescript-eslint/naming-convention': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
     semi: ['error', 'always'],
     'max-len': ['off'],
     'no-return-await': 'off',

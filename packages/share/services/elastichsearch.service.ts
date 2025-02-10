@@ -1,7 +1,7 @@
 import { SearchHit } from '@elastic/elasticsearch/lib/api/types';
 import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService as NestElasticsearchService } from '@nestjs/elasticsearch';
-import { IndexSearch } from 'packages/common/constant';
+import { TableName } from 'packages/common/constant';
 
 @Injectable()
 export class ElasticsearchService {
@@ -9,28 +9,18 @@ export class ElasticsearchService {
   constructor(private readonly elasticsearchService: NestElasticsearchService) {}
 
   async createIndex(index: string) {
-    try {
-      return this.elasticsearchService.indices.create({ index });
-    } catch (error) {
-      Logger.error(error);
-      return null;
-    }
+    return await this.elasticsearchService.indices.create({ index });
   }
 
   async indexData(index: string, id: string, body: any) {
-    try {
-      return this.elasticsearchService.index({
-        index,
-        id,
-        body,
-      });
-    } catch (error) {
-      Logger.error(error);
-      return null;
-    }
+    return await this.elasticsearchService.index({
+      index,
+      id,
+      body,
+    });
   }
 
-  async search(index: IndexSearch, query: string): Promise<SearchHit<unknown>[]> {
+  async search(index: TableName, query: string): Promise<SearchHit<unknown>[]> {
     try {
       const matchQuery = this.configQuery(index, query);
       const response = await this.elasticsearchService.search({
@@ -50,15 +40,10 @@ export class ElasticsearchService {
   }
 
   async deleteData(index: string, id: string) {
-    try {
-      return this.elasticsearchService.delete({
-        index,
-        id,
-      });
-    } catch (error) {
-      Logger.error(error);
-      return null;
-    }
+    return await this.elasticsearchService.delete({
+      index,
+      id,
+    });
   }
 
   async getAllData(index: string) {
@@ -79,15 +64,15 @@ export class ElasticsearchService {
     }
   }
 
-  private configQuery(index: IndexSearch, query: string) {
+  private configQuery(index: TableName, query: string) {
     const newQuery = {
       value: `*${query}*`,
       rewrite: 'constant_score',
     };
     switch (index) {
-      case IndexSearch.NOTES:
+      case TableName.NOTES:
         return { label: newQuery };
-      case IndexSearch.NOTE_DETAILS:
+      case TableName.NOTE_DETAILS:
         return { content: newQuery };
       default:
         return { label: newQuery };

@@ -29,7 +29,7 @@ export enum PackageService {
   NOTIFICATIONS = 'notifications',
 }
 
-export enum IndexSearch {
+export enum TableName {
   NOTES = 'notes',
   NOTE_DETAILS = 'note_details',
 }

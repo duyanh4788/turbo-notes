@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { NoteDetailType, User } from '@prisma/client';
-import { IndexSearch, TypeCount } from 'packages/common/constant';
+import { TableName, TypeCount } from 'packages/common/constant';
 import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
 import {
   CNoteDetailsDto,
@@ -28,7 +28,7 @@ export class NoteDetailsService {
 
   async searchs(userId: number, text: string): Promise<ResNotesDetails> {
     const hits = await this.elasticsearchService.search(
-      IndexSearch.NOTE_DETAILS,
+      TableName.NOTE_DETAILS,
       text,
     );
     if (!hits || !hits.length) return { total: 0, noteDetails: [] };
@@ -52,11 +52,6 @@ export class NoteDetailsService {
         this.initPayloadSendNoti(detail, user),
       );
     }
-    await this.elasticsearchService.indexData(
-      IndexSearch.NOTE_DETAILS,
-      detail.id.toString(),
-      detail,
-    );
     return detail;
   }
 
@@ -78,11 +73,6 @@ export class NoteDetailsService {
         );
       }
     }
-    await this.elasticsearchService.indexData(
-      IndexSearch.NOTE_DETAILS,
-      newDetail.id.toString(),
-      newDetail,
-    );
     return newDetail;
   }
 
@@ -94,10 +84,6 @@ export class NoteDetailsService {
     const { id } = params;
     await this.notesDetailsRepository.delete(userId, id);
     await this.usersGRPC.CountNoteDetails(userId, TypeCount.DE_CREASE);
-    await this.elasticsearchService.deleteData(
-      IndexSearch.NOTE_DETAILS,
-      id.toString(),
-    );
     return { id };
   }
 

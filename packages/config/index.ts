@@ -27,7 +27,14 @@ export const config = {
   GG_CALLBACK: process.env.GG_CALLBACK,
   DOMAIN_FE: process.env.DOMAIN_FE,
   DOMAIN_GG: process.env.DOMAIN_GG,
-  DATABASE_URL: process.env.DATABASE_URL,
+  PSQL: {
+    URL: process.env.DATABASE_URL,
+    HOST: process.env.PSQL_HOST,
+    USER: process.env.PSQL_USER,
+    PASSWORD: process.env.PSQL_PASSWORD,
+    PORT: Number(process.env.PSQL_PORT),
+    DB: process.env.PSQL_DB,
+  },
   API_KEY: process.env.API_KEY,
   REDIS: {
     HOST: process.env.REDIS_HOST,
@@ -48,9 +55,11 @@ export const config = {
     NOTES: path.join(process.cwd(), '../../packages', 'proto', 'notes.proto'),
     NOTI: path.join(process.cwd(), '../../packages', 'proto', 'notifications.proto'),
   },
-  ELAST: {
-    HOST: process.env.ELAST_HOST,
-    USERNAME: process.env.ELAST_USERNAME,
-    PASSWORD: process.env.ELAST_PASSWORD,
+  ELASTIC: {
+    HOST: process.env.ELASTIC_HOST,
+    USERNAME: process.env.ELASTIC_USERNAME,
+    PASSWORD: process.env.ELASTIC_PASSWORD,
   },
+  NUMBER_RETRY: Number(process.env.NUMBER_RETRY),
+  NUMBER_DELAY: Number(process.env.NUMBER_DELAY),
 };

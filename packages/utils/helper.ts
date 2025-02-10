@@ -32,4 +32,14 @@ export class Helper {
     const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
     return formattedDate.replace(',', '').replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3');
   }
+
+  static parseJson(jsonData: string) {
+    if (!jsonData) return null;
+    try {
+      const parseData = JSON.parse(jsonData);
+      return parseData;
+    } catch (_) {
+      return null;
+    }
+  }
 }

@@ -40,7 +40,7 @@ This Turborepo has some additional tools already setup for you:
 4. Migrate db with Prisma:
 
 ```
-export DATABASE_URL="postgresql://dev:123456@localhost:5442/notes?connection_limit=50"
+export PSQL_URL="postgresql://dev:123456@localhost:5442/notes?connection_limit=50"
 npm prisma migrate dev
 npm prisma generate
 ```

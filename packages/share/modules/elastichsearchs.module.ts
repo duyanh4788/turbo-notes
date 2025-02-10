@@ -7,10 +7,10 @@ import { ElasticsearchService } from '../services/elastichsearch.service';
 @Module({
   imports: [
     NestElasticsearchModule.register({
-      node: config.ELAST.HOST,
+      node: config.ELASTIC.HOST,
       auth: {
-        username: config.ELAST.USERNAME,
-        password: config.ELAST.PASSWORD,
+        username: config.ELASTIC.USERNAME,
+        password: config.ELASTIC.PASSWORD,
       },
     }),
   ],
