@@ -2,20 +2,20 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { NoteDetailType, User } from '@prisma/client';
 import { TableName, TypeCount } from 'packages/common/constant';
 import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
+import { NotesDetailsRepository } from 'src/repository/noteDetails.repository';
 import {
   CNoteDetailsDto,
   ParamsDto,
   QueryDto,
   UNoteDetailsDto,
-} from 'src/common/DTO/noteDetails.dto';
-import { NotificationsGRPC } from 'src/common/grpc/notifications/notifications.grpc';
-import { SendNotiReq } from 'src/common/grpc/notifications/options';
-import { UsersGRPC } from 'src/common/grpc/users/users.grpc';
+} from '../common/DTO/noteDetails.dto';
+import { NotificationsGRPC } from '../common/grpc/notifications/notifications.grpc';
+import { SendNotiReq } from '../common/grpc/notifications/options';
+import { UsersGRPC } from '../common/grpc/users/users.grpc';
 import {
   NoteDetails,
   ResNotesDetails,
-} from 'src/common/interface/noteDetails.interface';
-import { NotesDetailsRepository } from 'src/repository/noteDetails.repository';
+} from '../common/interface/noteDetails.interface';
 
 @Injectable()
 export class NoteDetailsService {

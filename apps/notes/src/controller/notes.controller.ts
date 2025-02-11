@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
-import { ChildNotesDto, CNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
-import { PagingDto } from 'src/common/DTO/paging.dto';
 import { NotesService } from 'src/services/notes.service';
+import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { PagingDto } from '../common/DTO/paging.dto';
 
 @ApiTags('Notes')
 @Controller('notes')

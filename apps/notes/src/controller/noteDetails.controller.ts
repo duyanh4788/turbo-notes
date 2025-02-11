@@ -12,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
+import { NoteDetailsService } from 'src/services/noteDetails.service';
 import {
   CNoteDetailsDto,
   QueryDto,
   UNoteDetailsDto,
-} from 'src/common/DTO/noteDetails.dto';
-import { SearchDto } from 'src/common/DTO/paging.dto';
-import { NoteDetailsService } from 'src/services/noteDetails.service';
+} from '../common/DTO/noteDetails.dto';
+import { SearchDto } from '../common/DTO/paging.dto';
 
 @ApiTags('Notes Detail')
 @Controller('note-details')

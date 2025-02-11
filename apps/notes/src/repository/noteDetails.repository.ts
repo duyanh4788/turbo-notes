@@ -6,8 +6,8 @@ import {
   ParamsDto,
   QueryDto,
   UNoteDetailsDto,
-} from 'src/common/DTO/noteDetails.dto';
-import { ResNotesDetails } from 'src/common/interface/noteDetails.interface';
+} from '../common/DTO/noteDetails.dto';
+import { ResNotesDetails } from '../common/interface/noteDetails.interface';
 
 @Injectable()
 export class NotesDetailsRepository {

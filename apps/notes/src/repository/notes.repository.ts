@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'packages/share/services/prisma.service';
-import { CNotesDto, ChildNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
-import { PagingDto } from 'src/common/DTO/paging.dto';
-import { Notes, ResNotes } from 'src/common/interface/notes.interface';
+import { CNotesDto, ChildNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { PagingDto } from '../common/DTO/paging.dto';
+import { Notes, ResNotes } from '../common/interface/notes.interface';
 
 @Injectable()
 export class NotesRepository {

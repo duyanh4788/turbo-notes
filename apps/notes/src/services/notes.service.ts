@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TypeCount } from 'packages/common/constant';
-import { ChildNotesDto, CNotesDto, UNotesDto } from 'src/common/DTO/notes.dto';
-import { PagingDto } from 'src/common/DTO/paging.dto';
-import { Notes, ResNotes } from 'src/common/interface/notes.interface';
 import { NotesRepository } from 'src/repository/notes.repository';
-import { UsersGRPC } from 'src/common/grpc/users/users.grpc';
+import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { PagingDto } from '../common/DTO/paging.dto';
+import { Notes, ResNotes } from '../common/interface/notes.interface';
+import { UsersGRPC } from '../common/grpc/users/users.grpc';
 
 @Injectable()
 export class NotesService {
