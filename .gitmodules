@@ -1,3 +1,0 @@
-[submodule "apps/notifications"]
-	path = apps/notifications
-	url = git@github.com:duyanh4788/turbo-notes.git
