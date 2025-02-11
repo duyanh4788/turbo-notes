@@ -31,7 +31,7 @@ export class NotesDetailsRepository {
       skip: Number(skip),
       take: Number(limit),
       orderBy: {
-        sorting: 'asc',
+        sorting: 'desc',
       },
     });
 

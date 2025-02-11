@@ -20,25 +20,6 @@ export class ElasticsearchService {
     });
   }
 
-  async search(index: TableName, query: string): Promise<SearchHit<unknown>[]> {
-    try {
-      const matchQuery = this.configQuery(index, query);
-      const response = await this.elasticsearchService.search({
-        index,
-        body: {
-          query: {
-            wildcard: matchQuery,
-          },
-        },
-      });
-
-      return response.hits.hits;
-    } catch (error) {
-      Logger.error(error);
-      return [];
-    }
-  }
-
   async deleteData(index: string, id: string) {
     return await this.elasticsearchService.delete({
       index,
@@ -64,18 +45,40 @@ export class ElasticsearchService {
     }
   }
 
-  private configQuery(index: TableName, query: string) {
-    const newQuery = {
-      value: `*${query}*`,
-      rewrite: 'constant_score',
-    };
+  async search(index: TableName, query: string): Promise<SearchHit<unknown>[]> {
+    try {
+      const fields = this.getSearchFields(index);
+
+      const response = await this.elasticsearchService.search({
+        index,
+        body: {
+          query: {
+            multi_match: {
+              query,
+              fields,
+              type: 'cross_fields',
+              operator: 'or',
+              minimum_should_match: '50%',
+            },
+          },
+        },
+      });
+
+      return response.hits.hits;
+    } catch (error) {
+      Logger.error(error);
+      return [];
+    }
+  }
+
+  private getSearchFields(index: TableName): string[] {
     switch (index) {
       case TableName.NOTES:
-        return { label: newQuery };
+        return ['label^2'];
       case TableName.NOTE_DETAILS:
-        return { content: newQuery };
+        return ['content^2'];
       default:
-        return { label: newQuery };
+        return ['content'];
     }
   }
 }
