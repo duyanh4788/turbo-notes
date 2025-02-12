@@ -19,8 +19,8 @@ services:
     networks:
       - anhdev
 
-  postgres:
-    image: bitnami/postgresql:latest
+  postgres-notes:
+    image: postgres:latest
     container_name: postgres-notes
     restart: always
     depends_on:
@@ -30,13 +30,13 @@ services:
     volumes:
       - /root/deployment/notes/psql-notes:/var/lib/postgresql/data
     environment:
-      - POSTGRESQL_USERNAME=dev
-      - POSTGRESQL_PASSWORD=123456
-      - POSTGRESQL_DATABASE=notes
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=dev
+      - POSTGRES_DB=notes
     networks:
       - anhdev
 
-  redis:
+  redis-notes:
     image: redis:latest
     container_name: redis-notes
     restart: always
@@ -50,9 +50,10 @@ services:
       - REDIS_PASSWORD=123456
     networks:
       - anhdev
-    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $$REDIS_PASSWORD'
+    command: >
+      sh -c "redis-server --appendonly yes --requirepass $$(echo $$REDIS_PASSWORD)"
 
-  rabbitmq:
+  rabbit-notes:
     image: rabbitmq:management-alpine
     container_name: 'rabbit-notes'
     depends_on:
@@ -61,8 +62,8 @@ services:
       - 5682:5672
       - 15682:15672
     volumes:
-      - /root/deployment/notes/rabbit-notes/data/:/var/lib/rabbit-notes/
-      - /root/deployment/notes/rabbit-notes/log/:/var/log/rabbit-notes/
+      - /root/deployment/notes/rabbit-notes/data:/var/lib/rabbit-notes/
+      - /root/deployment/notes/rabbit-notes/log:/var/log/rabbit-notes/
     environment:
       - RABBITMQ_DEFAULT_USER=dev
       - RABBITMQ_DEFAULT_PASS=123456
@@ -70,7 +71,7 @@ services:
     networks:
       - anhdev
 
-  elasticsearch:
+  elasticsearch-note:
     image: elasticsearch:8.17.1
     container_name: 'elasticsearch-notes'
     depends_on:
@@ -79,7 +80,7 @@ services:
       - 9201:9200
       - 9301:9300
     volumes:
-      - /root/deployment/notes/elasticsearch-notes:/usr/share/elasticsearch/data:Z
+      - /root/deployment/notes/elasticsearch-notes:/usr/share/elasticsearch/data
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
