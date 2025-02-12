@@ -1,22 +1,22 @@
 import { Metadata } from '@grpc/grpc-js';
 import { ClientOptions, Transport } from '@nestjs/microservices';
+import { User } from '@prisma/client';
 import { PackageService } from 'packages/common/constant';
 import { config } from 'packages/config';
 import { Observable } from 'rxjs';
 
-export interface CountReq {
+export interface UserReq {
   userId: number;
-  typeCount: string;
 }
 
-export interface CountRes {
+export interface UserRes {
   status: string;
   message: string;
+  data: User;
 }
 
 export interface UsersService {
-  CountNotes(request: CountReq, metaData: Metadata): Observable<void>;
-  CountNoteDetails(request: CountReq, metaData: Metadata): Observable<void>;
+  GetById(request: UserReq, metaData: Metadata): Observable<User>;
 }
 
 export const grpcUsersOptions: ClientOptions = {

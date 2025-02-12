@@ -60,6 +60,11 @@ export const config = {
     USERNAME: process.env.ELASTIC_USERNAME,
     PASSWORD: process.env.ELASTIC_PASSWORD,
   },
+  MAIL: {
+    SERVICE: process.env.SERVICE_MAIL,
+    USER: process.env.USER_MAIL,
+    PASS: process.env.PASS_MAIL,
+  },
   NUMBER_RETRY: Number(process.env.NUMBER_RETRY),
   NUMBER_DELAY: Number(process.env.NUMBER_DELAY),
 };

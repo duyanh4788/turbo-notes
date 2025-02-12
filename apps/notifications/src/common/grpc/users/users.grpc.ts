@@ -1,10 +1,10 @@
 import { Client, ClientGrpc } from '@nestjs/microservices';
-import { TypeCount } from 'packages/common/constant';
-import { firstValueFrom } from 'rxjs';
 import { Logger } from '@nestjs/common';
 import { Metadata } from '@grpc/grpc-js';
 import { config } from 'packages/config';
 import { grpcUsersOptions, UsersService } from './options';
+import { User } from '@prisma/client';
+import { firstValueFrom } from 'rxjs';
 
 export class UsersGRPC {
   private usersService: UsersService;
@@ -17,28 +17,16 @@ export class UsersGRPC {
     this.usersService = this.client.getService<UsersService>('UsersService');
     this.metadata = new Metadata();
     this.metadata.add(config.AUTHEN_KEY, config.API_KEY);
+    Logger.log(`GRPC Client initialized: ${JSON.stringify(this.usersService)}`);
   }
 
-  async CountNotes(userId: number, typeCount: TypeCount): Promise<void> {
+  async GetById(userId: number): Promise<User | null> {
     try {
-      await firstValueFrom(
-        this.usersService.CountNotes({ userId, typeCount }, this.metadata),
+      return await firstValueFrom(
+        this.usersService.GetById({ userId }, this.metadata),
       );
     } catch (error) {
-      Logger.error('GRPC_COUNT_NOTES', error);
-    }
-  }
-
-  async CountNoteDetails(userId: number, typeCount: TypeCount): Promise<void> {
-    try {
-      await firstValueFrom(
-        this.usersService.CountNoteDetails(
-          { userId, typeCount },
-          this.metadata,
-        ),
-      );
-    } catch (error) {
-      Logger.error('GRPC_COUNT_NOTE_DETAILS', error);
+      Logger.error('GRPC_GET_BY_ID', error);
     }
   }
 }

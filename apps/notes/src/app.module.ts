@@ -5,17 +5,11 @@ import { controllersProvider } from './provider/controllers.provider';
 import { servicesProvider } from './provider/services.provider';
 import { repositoryProvider } from './provider/repository.provider';
 import { UsersGRPC } from './common/grpc/users/users.grpc';
-import { NotificationsGRPC } from './common/grpc/notifications/notifications.grpc';
 
 @Module({
   imports: [ShareModule, ElasticsearchModules],
   controllers: [...controllersProvider],
-  providers: [
-    ...servicesProvider,
-    ...repositoryProvider,
-    UsersGRPC,
-    NotificationsGRPC,
-  ],
-  exports: [UsersGRPC, NotificationsGRPC],
+  providers: [...servicesProvider, ...repositoryProvider, UsersGRPC],
+  exports: [UsersGRPC],
 })
 export class AppModule {}

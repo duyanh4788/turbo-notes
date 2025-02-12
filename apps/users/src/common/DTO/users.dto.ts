@@ -84,3 +84,9 @@ export class CountNoteDto {
   @IsEnum(TypeCount)
   typeCount: TypeCount;
 }
+
+export class GetByIdDto {
+  @ApiProperty()
+  @IsString()
+  userId: number;
+}
