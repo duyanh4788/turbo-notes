@@ -4,7 +4,7 @@ import { ElasticsearchModules } from 'packages/share/modules/elastichsearchs.mod
 import { controllersProvider } from './provider/controllers.provider';
 import { servicesProvider } from './provider/services.provider';
 import { repositoryProvider } from './provider/repository.provider';
-import { UsersGRPC } from './common/grpc/users/users.grpc';
+import { UsersGRPC } from './grpc/users/users.grpc';
 
 @Module({
   imports: [ShareModule, ElasticsearchModules],

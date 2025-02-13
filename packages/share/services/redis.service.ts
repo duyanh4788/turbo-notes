@@ -10,7 +10,7 @@ export class RedisService {
   constructor() {
     this.redisClient = new Redis(config.REDIS.URL, {
       retryStrategy(times) {
-        const delay = Math.min(times * 50, 5000);
+        const delay = Math.min(times * 50, config.NUMBER_DELAY);
         Logger.log(`Retrying to connect to Redis... Attempt #${times}, delay: ${delay}ms`);
         return delay;
       },

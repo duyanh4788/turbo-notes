@@ -77,7 +77,7 @@ export class NoteDetailsListenerService
   }
 
   private async retryPostgresListener() {
-    if (this.reconnectAttempts >= 5) {
+    if (this.reconnectAttempts >= config.NUMBER_RETRY) {
       Logger.error('PostgreSQL retry limit reached, exiting...');
       return;
     }
@@ -86,7 +86,7 @@ export class NoteDetailsListenerService
     Logger.warn(
       `Retrying PostgreSQL connection (${this.reconnectAttempts}/5) in 5s...`,
     );
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, config.NUMBER_DELAY));
     await this.connectPostgres();
   }
 

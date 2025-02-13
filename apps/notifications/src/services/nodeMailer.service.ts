@@ -8,7 +8,7 @@ import { NoteDetails } from '@prisma/client';
 import * as nodemailer from 'nodemailer';
 import { config } from 'packages/config';
 import { Helper } from 'packages/utils/helper';
-import { UsersGRPC } from 'src/common/grpc/users/users.grpc';
+import { UsersGRPC } from 'src/grpc/users/users.grpc';
 
 @Injectable()
 export class NodeMailerService implements OnModuleInit {

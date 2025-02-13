@@ -4,7 +4,7 @@ import { NotesRepository } from 'src/repository/notes.repository';
 import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
 import { Notes, ResNotes } from '../common/interface/notes.interface';
-import { UsersGRPC } from '../common/grpc/users/users.grpc';
+import { UsersGRPC } from '../grpc/users/users.grpc';
 
 @Injectable()
 export class NotesService {
@@ -22,12 +22,18 @@ export class NotesService {
   }
 
   async created(userId: number, payload: CNotesDto): Promise<Notes> {
+    if (payload.label.length >= 99) {
+      payload.label = payload.label.slice(0, 99);
+    }
     const newNote = await this.notesRepository.create(userId, payload);
     await this.usersGRPC.CountNotes(userId, TypeCount.IN_CREASE);
     return newNote;
   }
 
   async updated(userId: number, payload: UNotesDto): Promise<Notes> {
+    if (payload.label.length >= 99) {
+      payload.label = payload.label.slice(0, 99);
+    }
     return this.notesRepository.update(userId, payload);
   }
 

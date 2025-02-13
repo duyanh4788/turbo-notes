@@ -9,7 +9,7 @@ import {
   QueryDto,
   UNoteDetailsDto,
 } from '../common/DTO/noteDetails.dto';
-import { UsersGRPC } from '../common/grpc/users/users.grpc';
+import { UsersGRPC } from '../grpc/users/users.grpc';
 import {
   NoteDetails,
   ResNotesDetails,
@@ -49,6 +49,9 @@ export class NoteDetailsService {
   }
 
   async created(user: User, payload: CNoteDetailsDto): Promise<NoteDetails> {
+    if (payload.title.length >= 99) {
+      payload.title = payload.title.slice(0, 99);
+    }
     const detail = await this.notesDetailsRepository.create(payload, user.id);
     await this.usersGRPC.CountNoteDetails(user.id, TypeCount.IN_CREASE);
     return detail;
@@ -59,6 +62,9 @@ export class NoteDetailsService {
       id: payload.id,
       noteId: payload.noteId,
     });
+    if (payload.title.length >= 99) {
+      payload.title = payload.title.slice(0, 99);
+    }
     const newDetail = await this.notesDetailsRepository.update(
       user.id,
       payload,
