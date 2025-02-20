@@ -5,6 +5,7 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "main": "src/main.ts",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -32,6 +33,7 @@
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.13.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

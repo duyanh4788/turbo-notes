@@ -51,9 +51,18 @@ export const config = {
     URL: process.env.RABBIT_URL,
   },
   PROTO_PATH: {
-    USERS: path.join(process.cwd(), '../../packages', 'proto', 'users.proto'),
-    NOTES: path.join(process.cwd(), '../../packages', 'proto', 'notes.proto'),
-    NOTI: path.join(process.cwd(), '../../packages', 'proto', 'notifications.proto'),
+    USERS:
+      process.env.NODE_ENV === 'development'
+        ? path.join(process.cwd(), '../../packages', 'proto', 'users.proto')
+        : path.resolve(__dirname, '../proto/users.proto'),
+    NOTES:
+      process.env.NODE_ENV === 'development'
+        ? path.join(process.cwd(), '../../packages', 'proto', 'notes.proto')
+        : path.resolve(__dirname, '../proto/notes.proto'),
+    NOTI:
+      process.env.NODE_ENV === 'development'
+        ? path.join(process.cwd(), '../../packages', 'proto', 'notifications.proto')
+        : path.resolve(__dirname, '../proto/notifications.proto'),
   },
   ELASTIC: {
     HOST: process.env.ELASTIC_HOST,

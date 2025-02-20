@@ -7,7 +7,6 @@ import { SuccessErrorInterceptor } from 'packages/middleware/success-error.inter
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { PackageService } from 'packages/common/constant';
 
-console.log(config.PROTO_PATH.USERS);
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(config.USERS_PATH);

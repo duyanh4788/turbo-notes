@@ -36,7 +36,7 @@ This Turborepo has some additional tools already setup for you:
 
 1. Clone this repo
 2. Install dependencies: `npm install`
-3. Start services with docker compose: `docker-compose up -d`
+3. Start services with docker compose: `docker compose up -d`
 4. Migrate db with Prisma:
 
 ```
