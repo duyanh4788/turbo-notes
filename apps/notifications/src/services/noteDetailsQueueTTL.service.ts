@@ -132,7 +132,10 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
     const mainQueueOK = await this.channel
       .checkQueue(ExchangeRabbit.SCHEDULE_MAIN_QUEUE)
       .catch(() => null);
-    if (!mainQueueOK) {
+    if (
+      !mainQueueOK ||
+      mainQueueOK.queue !== ExchangeRabbit.SCHEDULE_MAIN_QUEUE
+    ) {
       await this.channel.assertQueue(ExchangeRabbit.SCHEDULE_MAIN_QUEUE, {
         durable: true,
       });

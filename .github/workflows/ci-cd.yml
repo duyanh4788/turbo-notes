@@ -73,7 +73,6 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.notes == 'true'
     steps:
-      # Tương tự build-users, nhưng cho notes
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Set up Node.js
@@ -103,7 +102,6 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.notifications == 'true'
     steps:
-      # Tương tự build-users, nhưng cho notifications
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Set up Node.js
