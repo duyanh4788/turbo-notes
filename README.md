@@ -1,48 +1,72 @@
-# Turborepo starter
+# Notes Microservice
 
-This is an official starter Turborepo.
+![Project Banner](https://miro.medium.com/v2/resize:fit:1225/1*wjMYBqqJKgYxLYMkXL2Ahg.jpeg)
 
-## Using this example
+**Notes Microservice** is a demo project showcasing how to build a microservices architecture based on the `turbo-mono` source structure. The project is designed to simplify the management of shared packages, such as database connections or services, within a monorepo.
 
-Run the following command:
+## Purpose
 
-```sh
-npx create-turbo@latest
-```
+The project aims to:
+- Demonstrate a microservices architecture using [Turborepo](https://turbo.build/repo).
+- Facilitate easy management of shared packages (e.g., `connection` package) across microservices.
+- Ensure scalability and efficient maintenance for distributed systems.
+- Apply new technologies like elastichsearch, rabbitmq, gRPC, redis.
 
-## What's inside?
+The project includes three main microservices:
+- **users**: Manages user information.
+- **notes**: Handles note functionality.
+- **notifications**: Sends notifications.
 
-This Turborepo includes the following packages/apps:
+## Applied Technologies
 
-### Apps and Packages
+**Architecture**:  
+![Flow 02](https://storage.googleapis.com/4p_backup_bucket/cms_content_media/flow02-1740224718567.png)
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+The project utilizes the following technologies:
+- **PostgreSQL**: Relational database for persistent data storage.
+- **Redis**: High-speed caching for optimal performance.
+- **RabbitMQ**: Message broker for asynchronous service communication.
+- **gRPC**: High-performance RPC protocol for microservice interaction.
+- **Elasticsearch**: Powerful search and data analytics engine.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Build & Deploy
 
-### Utilities
+The build and deployment process is automated using **GitHub Actions CI/CD** and **Docker** on **Server linux**.
 
-This Turborepo has some additional tools already setup for you:
+### Installation and Running Instructions
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+1. **Clone the repository**:
+   ```bash
+   git clone git@github.com:duyanh4788/turbo-notes.git
+   cd turbo-notes
+   ```
 
-## How to run
+2. **Set up the environment**:
+   - Node.js v20+
+   - Install dependencies:
+     ```bash
+     npm install
+     ```
+   - Start services:
+     ```bash
+     docker compose up -d # Ensure service volumes are set up with the correct permissions
+     ```
+   - Run database migrations:
+     ```bash
+     npm run pris:mgr
+     ```
+   - Execute SQL trigger setup:
+     ```bash
+     psql -f prisma/trigger_note_details.sql
+     ```
+     
+3. **Run the project**:
+   ```bash
+   cd apps/**/ + insert env for apps/** follow env_tmpl
+   npm run start:dev
+   
 
-1. Clone this repo
-2. Install dependencies: `npm install`
-3. Start services with docker compose: `docker compose up -d`
-4. Migrate db with Prisma:
+4. **Contact**:
+    - Email: ```duyanh4788@gmail.com```
 
-```
-export PSQL_URL="postgresql://dev:123456@localhost:5442/notes?connection_limit=50"
-npm prisma migrate dev
-npm prisma generate
-```
-
-5. Start the server: `npm start:dev`
+    - Github: ```https://github.com/duyanh4788```
