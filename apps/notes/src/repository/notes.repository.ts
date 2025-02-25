@@ -59,11 +59,8 @@ export class NotesRepository {
     return this.prismaService.notes.findUnique({
       where: { id, userId },
       include: {
-        children: {
-          orderBy: {
-            sorting: 'asc',
-          },
-        },
+        children: { include: { _count: true }, orderBy: { sorting: 'asc' } },
+        _count: true,
       },
     });
   }

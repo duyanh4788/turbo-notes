@@ -7,6 +7,10 @@ export enum StatusRedis {
 
 export const CONNECT_REDIS = ['connecting', 'connect'];
 
+export enum KeyRedis {
+  USER = '_USER',
+}
+
 export enum AuthHeaders {
   API_KEY = 'x-api-key',
   SEVER_PROCESS = 'server-process',
