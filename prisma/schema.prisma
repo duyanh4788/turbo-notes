@@ -74,6 +74,14 @@ model Notes {
     @@map("note_details")
   }
 
+    model Banners {
+    id            Int           @id @default(autoincrement()) @map("id") @db.Integer
+    title         String        @map("title") @db.VarChar(100)
+    url           String        @map("url") @db.VarChar(255)
+    @@map("banners")
+  }
+
+
 
 // ENUM
 enum UserRole {

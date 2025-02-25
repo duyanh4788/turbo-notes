@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { User } from '@prisma/client';
+import { Banners, User } from '@prisma/client';
 import { config } from 'packages/config';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { GrpcInterceptor } from 'packages/middleware/grpc.interceptor';
@@ -20,6 +20,11 @@ import { UsersService } from 'src/services/users.service';
 @Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('banners')
+  async getBanners(): Promise<Banners[]> {
+    return this.usersService.getBanners();
+  }
 
   @Post('google')
   async googleLogin() {

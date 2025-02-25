@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Banners, User } from '@prisma/client';
 import { TypeCount } from 'packages/common/constant';
 import { Observable } from 'rxjs';
 import { CountNoteDto, CreateUserDto } from 'src/common/DTO/users.dto';
@@ -63,5 +63,9 @@ export class UsersService {
     }
     await this.userRepository.update(userIdNumber, user);
     return;
+  }
+
+  async getBanners(): Promise<Banners[]> {
+    return await this.userRepository.getBanners();
   }
 }

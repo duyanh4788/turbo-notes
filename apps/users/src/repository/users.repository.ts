@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Banners, User } from '@prisma/client';
 import { KeyRedis } from 'packages/common/constant';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { RedisService } from 'packages/share/services/redis.service';
@@ -65,6 +65,21 @@ export class UserRepository {
     });
     await this.setRedisUser(user);
     return user;
+  }
+
+  async getBanners(): Promise<Banners[]> {
+    let banners: Banners[];
+    const dataRedis = await this.redis.getClient().get(KeyRedis.BANNER);
+    if (dataRedis) {
+      banners = Helper.parseJson(dataRedis);
+    }
+    if (banners) return banners;
+    banners = await this.prismaService.banners.findMany({
+      orderBy: { id: 'asc' },
+    });
+    const stringData = JSON.stringify(banners);
+    await this.redis.getClient().set(KeyRedis.BANNER, stringData);
+    return banners;
   }
 
   private async setRedisUser(user: User) {
