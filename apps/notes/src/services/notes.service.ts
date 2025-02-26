@@ -3,7 +3,7 @@ import { TypeCount } from 'packages/common/constant';
 import { NotesRepository } from 'src/repository/notes.repository';
 import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
-import { Notes, ResNotes } from '../common/interface/notes.interface';
+import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
 import { UsersGRPC } from '../grpc/users/users.grpc';
 
 @Injectable()
@@ -45,8 +45,8 @@ export class NotesService {
     if (!note) {
       throw new NotFoundException();
     }
-    await this.notesRepository.delete(userId, note.id);
-    await this.usersGRPC.CountNotes(userId, TypeCount.DE_CREASE);
+    const result = await this.notesRepository.delete(userId, note.id);
+    await this.usersGRPC.DecreaseTotal(result);
     return { id, parentId: note.parentId };
   }
 
@@ -58,5 +58,9 @@ export class NotesService {
     const newNote = await this.notesRepository.create(userId, payload);
     await this.usersGRPC.CountNotes(userId, TypeCount.IN_CREASE);
     return newNote;
+  }
+
+  async countByUserId(userId: number, noteId: string): Promise<CountRes> {
+    return this.notesRepository.countByUserId(userId, noteId);
   }
 }

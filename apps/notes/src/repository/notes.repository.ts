@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { CNotesDto, ChildNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
-import { Notes, ResNotes } from '../common/interface/notes.interface';
+import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
 
 @Injectable()
 export class NotesRepository {
@@ -83,9 +83,54 @@ export class NotesRepository {
     });
   }
 
-  async delete(userId: number, id: string): Promise<void> {
-    await this.prismaService.notes.delete({
-      where: { id, userId },
-    });
+  async delete(userId: number, noteId: string): Promise<CountRes> {
+    const result = await this.prismaService.$queryRaw<
+      { deletedNotes: bigint; deletedNoteDetails: bigint }[]
+    >`
+      WITH RECURSIVE NoteTree AS (
+        SELECT id FROM notes WHERE id = ${noteId}::uuid AND "userId" = ${userId}
+        UNION ALL
+        SELECT n.id FROM notes n 
+        INNER JOIN NoteTree nt ON n.parent_id = nt.id
+        WHERE n."userId" = ${userId}
+      ),
+      deletedNoteDetails AS (
+        DELETE FROM note_details 
+        WHERE note_id IN (SELECT id FROM NoteTree)
+        RETURNING 1
+      ),
+      deletedNotes AS (
+        DELETE FROM notes 
+        WHERE id IN (SELECT id FROM NoteTree)
+        RETURNING 1
+      )
+      SELECT 
+        (SELECT COUNT(*) FROM deletedNotes) AS "deletedNotes",
+        (SELECT COUNT(*) FROM deletedNoteDetails) AS "deletedNoteDetails";
+    `;
+
+    const totalNotes = Number(result[0]?.deletedNotes) || 0;
+    const totalNoteDetails = Number(result[0]?.deletedNoteDetails) || 0;
+
+    return { totalNotes, totalNoteDetails, userId };
+  }
+
+  async countByUserId(userId: number, noteId: string): Promise<CountRes> {
+    const result = await this.prismaService.$queryRaw`
+      WITH RECURSIVE NoteTree AS (
+      SELECT id FROM notes WHERE id = ${noteId}::uuid and "userId" = ${userId}
+      UNION ALL
+      SELECT n.id FROM notes n INNER JOIN NoteTree nt ON n.parent_id = nt.id
+      )
+      SELECT 
+        COUNT(*) AS total_notes, 
+        (SELECT COUNT(*) FROM note_details WHERE note_id IN (SELECT id FROM NoteTree)) AS total_note_details
+      FROM NoteTree;
+    `;
+
+    const totalNotes = Number(result[0]?.total_notes) || 0;
+    const totalNoteDetails = Number(result[0]?.total_note_details) || 0;
+
+    return { totalNotes, totalNoteDetails, noteId };
   }
 }

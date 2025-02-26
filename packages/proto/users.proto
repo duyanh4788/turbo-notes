@@ -7,12 +7,19 @@ import "google/protobuf/empty.proto";
 service UsersService {
   rpc CountNotes (CountReq) returns (google.protobuf.Empty);
   rpc CountNoteDetails (CountReq) returns (google.protobuf.Empty);
+  rpc DecreaseTotal (DecreaseTotalReq) returns (google.protobuf.Empty);
   rpc GetById (GetByIdDto) returns (User);
 }
 
 message CountReq {
   string userId = 1;
   string typeCount = 2;
+}
+
+message DecreaseTotalReq {
+  string totalNotes = 1;
+  string totalNoteDetails = 2;
+  string userId = 3;
 }
 
 message GetByIdDto {

@@ -90,3 +90,17 @@ export class GetByIdDto {
   @IsString()
   userId: number;
 }
+
+export class DecreaseTotalDto {
+  @ApiProperty()
+  @IsString()
+  totalNotes: string;
+
+  @ApiProperty()
+  @IsString()
+  totalNoteDetails: string;
+
+  @ApiProperty()
+  @IsString()
+  userId: string;
+}

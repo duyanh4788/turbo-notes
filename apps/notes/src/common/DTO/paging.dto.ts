@@ -16,3 +16,9 @@ export class SearchDto {
   @IsString()
   text: string;
 }
+
+export class CountDto {
+  @ApiProperty({ required: true })
+  @IsString()
+  noteId: string;
+}

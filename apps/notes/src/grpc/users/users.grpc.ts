@@ -4,7 +4,12 @@ import { firstValueFrom } from 'rxjs';
 import { Logger } from '@nestjs/common';
 import { Metadata } from '@grpc/grpc-js';
 import { config } from 'packages/config';
-import { grpcUsersOptions, UsersService } from './options';
+import {
+  CountReq,
+  DecreaseTotalReq,
+  grpcUsersOptions,
+  UsersService,
+} from './options';
 
 export class UsersGRPC {
   private usersService: UsersService;
@@ -39,6 +44,16 @@ export class UsersGRPC {
       );
     } catch (error) {
       Logger.error('GRPC_COUNT_NOTE_DETAILS', error);
+    }
+  }
+
+  async DecreaseTotal(request: DecreaseTotalReq): Promise<void> {
+    try {
+      await firstValueFrom(
+        this.usersService.DecreaseTotal(request, this.metadata),
+      );
+    } catch (error) {
+      Logger.error('GRPC_DECREASE_TOTAL', error);
     }
   }
 }

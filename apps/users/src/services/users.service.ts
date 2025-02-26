@@ -2,7 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Banners, User } from '@prisma/client';
 import { TypeCount } from 'packages/common/constant';
 import { Observable } from 'rxjs';
-import { CountNoteDto, CreateUserDto } from 'src/common/DTO/users.dto';
+import {
+  CountNoteDto,
+  CreateUserDto,
+  DecreaseTotalDto,
+} from 'src/common/DTO/users.dto';
 import { UserRepository } from 'src/repository/users.repository';
 
 @Injectable()
@@ -58,6 +62,28 @@ export class UsersService {
       typeCount === TypeCount.IN_CREASE
         ? user.noteDetailsCount + 1
         : user.noteDetailsCount - 1;
+    if (user.noteDetailsCount < 0) {
+      user.noteDetailsCount = 0;
+    }
+    await this.userRepository.update(userIdNumber, user);
+    return;
+  }
+
+  async DecreaseTotal(payload: DecreaseTotalDto): Promise<Observable<void>> {
+    const { userId, totalNotes, totalNoteDetails } = payload;
+    if (!totalNotes || !totalNoteDetails) return;
+    const userIdNumber = Number(userId);
+    const totalNoteNumber = Number(totalNotes);
+    const totalNoteDetailNumber = Number(totalNoteDetails);
+    if (!totalNoteNumber && !totalNoteDetailNumber) return;
+
+    const user = await this.findById(userIdNumber);
+    user.notesCount = user.notesCount - totalNoteNumber;
+    user.noteDetailsCount = user.noteDetailsCount - totalNoteDetailNumber;
+
+    if (user.notesCount < 0) {
+      user.notesCount = 0;
+    }
     if (user.noteDetailsCount < 0) {
       user.noteDetailsCount = 0;
     }

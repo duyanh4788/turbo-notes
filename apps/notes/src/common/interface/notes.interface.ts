@@ -13,3 +13,10 @@ export interface CountReq {
   userId: string;
   typeCount: string;
 }
+
+export interface CountRes {
+  totalNotes: number;
+  totalNoteDetails: number;
+  noteId?: string;
+  userId?: number;
+}

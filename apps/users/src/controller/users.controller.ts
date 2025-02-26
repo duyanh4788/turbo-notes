@@ -13,7 +13,11 @@ import { config } from 'packages/config';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { GrpcInterceptor } from 'packages/middleware/grpc.interceptor';
 import { from, Observable } from 'rxjs';
-import { CountNoteDto, GetByIdDto } from 'src/common/DTO/users.dto';
+import {
+  CountNoteDto,
+  DecreaseTotalDto,
+  GetByIdDto,
+} from 'src/common/DTO/users.dto';
 import { GoogleAuthGuard } from 'src/middleware/google-auth-guard.service';
 import { UsersService } from 'src/services/users.service';
 
@@ -72,5 +76,11 @@ export class UsersController {
   @UseInterceptors(GrpcInterceptor)
   GetById(payload: GetByIdDto): Observable<User> {
     return from(this.usersService.findById(Number(payload.userId)));
+  }
+
+  @GrpcMethod('UsersService', 'DecreaseTotal')
+  @UseInterceptors(GrpcInterceptor)
+  DecreaseTotal(payload: DecreaseTotalDto): Promise<Observable<void>> {
+    return this.usersService.DecreaseTotal(payload);
   }
 }
