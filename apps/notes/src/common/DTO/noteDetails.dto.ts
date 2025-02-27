@@ -13,13 +13,18 @@ export class CNoteDetailsDto {
   content: string;
 
   @ApiProperty()
+  @IsString()
+  noteId: string;
+
+  @ApiProperty()
   @IsOptional()
   @IsString()
   scheduleTime?: string;
 
   @ApiProperty()
-  @IsString()
-  noteId: string;
+  @IsOptional()
+  @IsEnum(NoteDetailType)
+  type?: NoteDetailType;
 }
 
 export class UNoteDetailsDto {

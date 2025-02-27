@@ -8,9 +8,11 @@ import {
   Put,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { NoteDetailsService } from 'src/services/noteDetails.service';
 import {
@@ -19,16 +21,37 @@ import {
   UNoteDetailsDto,
 } from '../common/DTO/noteDetails.dto';
 import { SearchDto } from '../common/DTO/paging.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { GCStorageService } from 'src/services/gcstorage.service';
 
 @ApiTags('Notes Detail')
 @Controller('note-details')
 export class NoteDetailsController {
-  constructor(private readonly noteDetailsService: NoteDetailsService) {}
+  constructor(
+    private readonly noteDetailsService: NoteDetailsService,
+    private readonly gCStorageService: GCStorageService,
+  ) {}
 
   @Get('/search')
   @UseGuards(AuthMiddleware)
   async search(@Req() req, @Query() query: SearchDto) {
     return this.noteDetailsService.searchs(req.user.id, query.text);
+  }
+
+  @Post('/upload-file')
+  @UseGuards(AuthMiddleware)
+  @UseInterceptors(
+    FileInterceptor('upload', {
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  async uploadFile(
+    @UploadedFile() file,
+    @Body('noteId') noteId: string,
+    @Req() req,
+  ) {
+    return await this.noteDetailsService.uploadFile(req.user.id, noteId, file);
   }
 
   @Get()

@@ -74,6 +74,11 @@ export const config = {
     USER: process.env.USER_MAIL,
     PASS: process.env.PASS_MAIL,
   },
+  GCS: {
+    PROJECT_ID: process.env.GCS_PROJECT_ID,
+    KEY_FILE_NAME: process.env.GCS_KEY_FILE_NAME,
+    BUCKET: process.env.GCS_BUCKET,
+  },
   NUMBER_RETRY: Number(process.env.NUMBER_RETRY),
   NUMBER_DELAY: Number(process.env.NUMBER_DELAY),
 };

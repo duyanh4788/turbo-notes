@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { NoteDetailType, User } from '@prisma/client';
 import { TableName, TypeCount } from 'packages/common/constant';
 import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
 import { NotesDetailsRepository } from 'src/repository/noteDetails.repository';
@@ -11,15 +11,18 @@ import {
 } from '../common/DTO/noteDetails.dto';
 import { UsersGRPC } from '../grpc/users/users.grpc';
 import {
+  FileGcs,
   NoteDetails,
   ResNotesDetails,
 } from '../common/interface/noteDetails.interface';
+import { GCStorageService } from './gcstorage.service';
 
 @Injectable()
 export class NoteDetailsService {
   constructor(
     private readonly notesDetailsRepository: NotesDetailsRepository,
     private readonly usersGRPC: UsersGRPC,
+    private readonly gCStorageService: GCStorageService,
     private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
@@ -54,6 +57,31 @@ export class NoteDetailsService {
     }
     const detail = await this.notesDetailsRepository.create(payload, user.id);
     await this.usersGRPC.CountNoteDetails(user.id, TypeCount.IN_CREASE);
+    return detail;
+  }
+
+  async uploadFile(
+    userId: number,
+    noteId: string,
+    file: FileGcs,
+  ): Promise<NoteDetails> {
+    if (!file) {
+      throw new NotFoundException();
+    }
+    const uploadFile = await this.gCStorageService.uploadFile(
+      file,
+      'mms_content_media',
+    );
+    if (!uploadFile || !uploadFile.publicUrl) {
+      throw new NotFoundException();
+    }
+    const payload = new CNoteDetailsDto();
+    payload.title = uploadFile.name.split('/')[1];
+    payload.content = uploadFile.publicUrl;
+    payload.noteId = noteId;
+    payload.type = NoteDetailType.uploadFile;
+    const detail = await this.notesDetailsRepository.create(payload, userId);
+    await this.usersGRPC.CountNoteDetails(userId, TypeCount.IN_CREASE);
     return detail;
   }
 

@@ -102,6 +102,7 @@ enum NoteDetailType {
   string
   code
   schedule
+  uploadFile
 }
 
 enum NoteType {
