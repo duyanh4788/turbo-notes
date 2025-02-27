@@ -75,7 +75,7 @@ export class UserRepository {
     }
     if (banners) return banners;
     banners = await this.prismaService.banners.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { sorting: 'asc' },
     });
     const stringData = JSON.stringify(banners);
     await this.redis.getClient().set(KeyRedis.BANNER, stringData);

@@ -78,6 +78,7 @@ model Notes {
     id            Int           @id @default(autoincrement()) @map("id") @db.Integer
     title         String        @map("title") @db.VarChar(100)
     url           String        @map("url") @db.VarChar(255)
+    sorting       Int             @default(autoincrement()) @map("sorting") @db.Integer
     @@map("banners")
   }
 
