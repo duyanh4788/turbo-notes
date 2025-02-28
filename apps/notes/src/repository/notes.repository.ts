@@ -85,7 +85,11 @@ export class NotesRepository {
 
   async delete(userId: number, noteId: string): Promise<CountRes> {
     const result = await this.prismaService.$queryRaw<
-      { deletedNotes: bigint; deletedNoteDetails: bigint }[]
+      {
+        deletedNotes: bigint;
+        deletedNoteDetails: bigint;
+        titleDeletedNoteDetails: string[];
+      }[]
     >`
       WITH RECURSIVE NoteTree AS (
         SELECT id FROM notes WHERE id = ${noteId}::uuid AND "userId" = ${userId}
@@ -97,7 +101,7 @@ export class NotesRepository {
       deletedNoteDetails AS (
         DELETE FROM note_details 
         WHERE note_id IN (SELECT id FROM NoteTree)
-        RETURNING 1
+        RETURNING title, type
       ),
       deletedNotes AS (
         DELETE FROM notes 
@@ -106,13 +110,15 @@ export class NotesRepository {
       )
       SELECT 
         (SELECT COUNT(*) FROM deletedNotes) AS "deletedNotes",
-        (SELECT COUNT(*) FROM deletedNoteDetails) AS "deletedNoteDetails";
+        (SELECT COUNT(*) FROM deletedNoteDetails) AS "deletedNoteDetails",
+        COALESCE((SELECT ARRAY_AGG(dnd.title) FROM deletedNoteDetails dnd WHERE dnd.type = 'uploadFile'), '{}') AS "titleDeletedNoteDetails";
     `;
 
     const totalNotes = Number(result[0]?.deletedNotes) || 0;
     const totalNoteDetails = Number(result[0]?.deletedNoteDetails) || 0;
+    const titleNoteDetails = result[0]?.titleDeletedNoteDetails || [];
 
-    return { totalNotes, totalNoteDetails, userId };
+    return { totalNotes, totalNoteDetails, userId, titleNoteDetails };
   }
 
   async countByUserId(userId: number, noteId: string): Promise<CountRes> {

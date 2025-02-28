@@ -12,6 +12,7 @@ import {
 import { UsersGRPC } from '../grpc/users/users.grpc';
 import {
   FileGcs,
+  FLODER_GCS,
   NoteDetails,
   ResNotesDetails,
 } from '../common/interface/noteDetails.interface';
@@ -68,10 +69,7 @@ export class NoteDetailsService {
     if (!file) {
       throw new NotFoundException();
     }
-    const uploadFile = await this.gCStorageService.uploadFile(
-      file,
-      'mms_content_media',
-    );
+    const uploadFile = await this.gCStorageService.uploadFile(file, FLODER_GCS);
     if (!uploadFile || !uploadFile.publicUrl) {
       throw new NotFoundException();
     }
@@ -101,10 +99,13 @@ export class NoteDetailsService {
   }
 
   async deleted(userId: number, params: ParamsDto): Promise<{ id: number }> {
-    await this.findById(userId, params);
+    const noteDetail = await this.findById(userId, params);
     const { id } = params;
     await this.notesDetailsRepository.delete(userId, id);
     await this.usersGRPC.CountNoteDetails(userId, TypeCount.DE_CREASE);
+    if (noteDetail.type === NoteDetailType.uploadFile) {
+      await this.gCStorageService.removeFile(noteDetail.title);
+    }
     return { id };
   }
 }

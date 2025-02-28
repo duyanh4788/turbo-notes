@@ -19,4 +19,5 @@ export interface CountRes {
   totalNoteDetails: number;
   noteId?: string;
   userId?: number;
+  titleNoteDetails?: string[];
 }

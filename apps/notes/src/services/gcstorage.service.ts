@@ -1,8 +1,11 @@
 import { Bucket, Storage } from '@google-cloud/storage';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { config } from 'packages/config';
 import { parse } from 'path';
-import { FileGcs } from 'src/common/interface/noteDetails.interface';
+import {
+  FileGcs,
+  FLODER_GCS,
+} from 'src/common/interface/noteDetails.interface';
 
 @Injectable()
 export class GCStorageService {
@@ -54,11 +57,11 @@ export class GCStorageService {
   }
 
   async removeFile(fileName: string): Promise<void> {
-    const file = this.bucket.file(fileName);
+    const file = this.bucket.file(`${FLODER_GCS}/${fileName}`);
     try {
       await file.delete();
     } catch (error) {
-      throw new BadRequestException(error?.message);
+      Logger.error(error?.message);
     }
   }
 }

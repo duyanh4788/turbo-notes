@@ -5,12 +5,14 @@ import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
 import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
 import { UsersGRPC } from '../grpc/users/users.grpc';
+import { GCStorageService } from './gcstorage.service';
 
 @Injectable()
 export class NotesService {
   constructor(
     private readonly notesRepository: NotesRepository,
     private readonly usersGRPC: UsersGRPC,
+    private readonly gCStorageService: GCStorageService,
   ) {}
 
   async getAll(userId: number, query: PagingDto): Promise<ResNotes> {
@@ -46,7 +48,15 @@ export class NotesService {
       throw new NotFoundException();
     }
     const result = await this.notesRepository.delete(userId, note.id);
-    await this.usersGRPC.DecreaseTotal(result);
+    const { titleNoteDetails, ...parseResult } = result;
+    await this.usersGRPC.DecreaseTotal(parseResult);
+    if (titleNoteDetails && titleNoteDetails.length) {
+      await Promise.all(
+        titleNoteDetails.map(async (item) => {
+          await this.gCStorageService.removeFile(item);
+        }),
+      );
+    }
     return { id, parentId: note.parentId };
   }
 

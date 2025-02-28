@@ -19,3 +19,5 @@ export interface FileGcs {
   path: string;
   buffer: Buffer;
 }
+
+export const FLODER_GCS = 'mms_content_media';
