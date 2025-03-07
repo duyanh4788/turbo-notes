@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'packages/share/services/prisma.service';
-import { CNotesDto, ChildNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
 import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
 
@@ -29,7 +29,12 @@ export class NotesRepository {
         sorting: 'asc',
       },
       include: {
-        children: { include: { _count: true } },
+        children: {
+          include: { _count: true },
+          orderBy: {
+            sorting: 'asc',
+          },
+        },
         _count: true,
       },
     });
@@ -47,7 +52,12 @@ export class NotesRepository {
         sorting: 'asc',
       },
       include: {
-        children: { include: { _count: true } },
+        children: {
+          include: { _count: true },
+          orderBy: {
+            sorting: 'asc',
+          },
+        },
         _count: true,
       },
     });
@@ -65,22 +75,57 @@ export class NotesRepository {
     });
   }
 
-  async create(
-    userId: number,
-    payload: CNotesDto | ChildNotesDto,
-  ): Promise<Notes> {
-    const newData = { ...payload, userId };
+  async create(userId: number, payload: CNotesDto): Promise<Notes> {
+    const { parentId } = payload;
+
+    const maxSorting = await this.prismaService.notes.aggregate({
+      _max: { sorting: true },
+      where: { parentId: parentId || undefined },
+    });
+
+    const newSorting = (maxSorting._max.sorting || 0) + 1;
+
     return this.prismaService.notes.create({
-      data: newData,
+      data: {
+        ...payload,
+        userId,
+        sorting: newSorting,
+      },
     });
   }
 
   async update(userId: number, payload: UNotesDto): Promise<Notes> {
-    const { id } = payload;
+    const { id, sorting, parentId } = payload;
+    if (sorting && sorting > 0) {
+      const note = await this.prismaService.notes.findUnique({
+        where: { id },
+        select: { sorting: true, parentId: true },
+      });
+      if (!note) throw new NotFoundException();
+      if (note.sorting === sorting && note.parentId === parentId) return;
+      await this.updateSortings(note.sorting, sorting, parentId);
+    }
     return this.prismaService.notes.update({
       where: { id, userId },
       data: payload,
     });
+  }
+
+  async updateSortings(oldSorting: number, sorting: number, parentId: string) {
+    await this.prismaService.$transaction([
+      this.prismaService.notes.updateMany({
+        where: {
+          parentId,
+          sorting: {
+            gte: Math.min(oldSorting, sorting),
+            lte: Math.max(oldSorting, sorting),
+          },
+        },
+        data: {
+          sorting: oldSorting < sorting ? { decrement: 1 } : { increment: 1 },
+        },
+      }),
+    ]);
   }
 
   async delete(userId: number, noteId: string): Promise<CountRes> {

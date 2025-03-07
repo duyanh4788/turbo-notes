@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsNumber } from 'class-validator';
 
 export enum StatusType {
   ACTIVE = 'active',
@@ -19,6 +19,11 @@ export class CNotesDto {
   @ApiProperty({ required: true })
   @IsString()
   label: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  parentId?: string;
 }
 
 export class UNotesDto {
@@ -35,14 +40,14 @@ export class UNotesDto {
   @IsEnum(StatusType)
   @IsOptional()
   status?: StatusType;
-}
-
-export class ChildNotesDto {
-  @ApiProperty({ required: true })
-  @IsString()
-  parentId: string;
 
   @ApiProperty()
   @IsString()
-  label: string;
+  @IsOptional()
+  parentId?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  sorting?: number;
 }

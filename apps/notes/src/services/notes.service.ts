@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TypeCount } from 'packages/common/constant';
 import { NotesRepository } from 'src/repository/notes.repository';
-import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { PagingDto } from '../common/DTO/paging.dto';
 import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
 import { UsersGRPC } from '../grpc/users/users.grpc';
@@ -33,7 +33,7 @@ export class NotesService {
   }
 
   async updated(userId: number, payload: UNotesDto): Promise<Notes> {
-    if (payload.label.length >= 99) {
+    if (payload.label && payload.label.length >= 99) {
       payload.label = payload.label.slice(0, 99);
     }
     return this.notesRepository.update(userId, payload);
@@ -60,7 +60,7 @@ export class NotesService {
     return { id, parentId: note.parentId };
   }
 
-  async createdChild(userId: number, payload: ChildNotesDto): Promise<Notes> {
+  async createdChild(userId: number, payload: CNotesDto): Promise<Notes> {
     const note = await this.findById(userId, payload.parentId);
     if (!note) {
       throw new NotFoundException();

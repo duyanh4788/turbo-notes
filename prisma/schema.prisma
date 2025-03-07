@@ -35,7 +35,7 @@ model Notes {
   parentId      String?       @map("parent_id") @db.Uuid
   createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamp(0)
-  sorting       Int           @default(autoincrement()) @map("sorting") @db.Integer
+  sorting       Int           @map("sorting") @db.Integer
 
   noteDetails   NoteDetails[]
 

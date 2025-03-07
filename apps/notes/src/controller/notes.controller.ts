@@ -13,7 +13,7 @@ import {
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { NotesService } from 'src/services/notes.service';
-import { ChildNotesDto, CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
+import { CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
 import { CountDto, PagingDto } from '../common/DTO/paging.dto';
 
 @ApiTags('Notes')
@@ -23,7 +23,7 @@ export class NotesController {
 
   @Post('/child')
   @UseGuards(AuthMiddleware)
-  async createdChild(@Req() req, @Body() payload: ChildNotesDto) {
+  async createdChild(@Req() req, @Body() payload: CNotesDto) {
     return this.notesService.createdChild(req.user.id, payload);
   }
 
