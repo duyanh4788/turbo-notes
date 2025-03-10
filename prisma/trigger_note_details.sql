@@ -10,9 +10,14 @@ BEGIN
         'operation', TG_OP,
         'table', TG_TABLE_NAME,
         'id', COALESCE(NEW.id, OLD.id),
-        'new_data', NEW,
-        'old_data', OLD
+        'new_data', json_build_object(
+            'id', COALESCE(NEW.id, OLD.id),
+            'type', COALESCE(NEW.type, OLD.type),
+            'schedule_time', COALESCE(NEW.schedule_time, OLD.schedule_time),
+            'user_id', COALESCE(NEW.user_id, OLD.user_id)
+        )
     );
+
     PERFORM pg_notify('note_detail_channel', payload::TEXT);
     RETURN NEW;
 END;

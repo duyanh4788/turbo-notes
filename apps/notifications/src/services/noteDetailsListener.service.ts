@@ -4,7 +4,7 @@ import {
   OnModuleDestroy,
   Logger,
 } from '@nestjs/common';
-import { TableName } from 'packages/common/constant';
+import { KeyRedis, TableName } from 'packages/common/constant';
 import { config } from 'packages/config';
 import { Helper } from 'packages/utils/helper';
 import { Client } from 'pg';
@@ -16,6 +16,7 @@ import {
 } from 'src/common/interface/noteDetails.interface';
 import { NoteDetailType } from '@prisma/client';
 import { NoteDetailQueueTTLService } from './noteDetailsQueueTTL.service';
+import { RedisService } from 'packages/share/services/redis.service';
 
 @Injectable()
 export class NoteDetailsListenerService
@@ -27,6 +28,7 @@ export class NoteDetailsListenerService
   constructor(
     private noteDetailsPubSubService: NoteDetailsPubSubService,
     private noteDetailQueueTTLService: NoteDetailQueueTTLService,
+    private readonly redis: RedisService,
   ) {
     this.client = new Client({
       user: config.PSQL.USER,
@@ -47,11 +49,20 @@ export class NoteDetailsListenerService
       Logger.log('Listening for database changes...');
       await this.client.query(`LISTEN ${ValueListener.NOTE_DETAIL_CHANNEL}`);
 
-      this.client.on('notification', (msg) => {
+      this.client.on('notification', async (msg) => {
         const payload: NoteDetailsLIstener = Helper.parseJson(msg?.payload);
         if (!payload) return;
         if (!Object.values(OperationPSQL).includes(payload.operation)) return;
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
+        const content: string = await this.redis._get(
+          `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
+        );
+        if (!content) return;
+
+        if (payload.new_data) {
+          payload.new_data.content = content;
+        }
+
         if (
           payload.new_data &&
           payload.new_data.type === NoteDetailType.schedule &&

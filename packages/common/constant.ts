@@ -10,6 +10,7 @@ export const CONNECT_REDIS = ['connecting', 'connect'];
 export enum KeyRedis {
   USER = '_USER',
   BANNER = '_BANNER',
+  CONTENT_NOTE_DETAIL = '_CONTENT_NOTE_DETAIL',
 }
 
 export enum AuthHeaders {

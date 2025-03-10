@@ -8,10 +8,15 @@ import {
   UNoteDetailsDto,
 } from '../common/DTO/noteDetails.dto';
 import { ResNotesDetails } from '../common/interface/noteDetails.interface';
+import { RedisService } from 'packages/share/services/redis.service';
+import { KeyRedis } from 'packages/common/constant';
 
 @Injectable()
 export class NotesDetailsRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async getAll(userId: number, query: QueryDto): Promise<ResNotesDetails> {
     const { skip = 0, limit = 10, noteId } = query;
@@ -63,22 +68,33 @@ export class NotesDetailsRepository {
   }
 
   async create(payload: CNoteDetailsDto, userId: number): Promise<NoteDetails> {
-    return this.prismaService.noteDetails.create({
+    const noteDetail = await this.prismaService.noteDetails.create({
       data: { ...payload, userId },
     });
+    await this.redis._set(
+      `${KeyRedis.CONTENT_NOTE_DETAIL}_${noteDetail.id}`,
+      noteDetail.content,
+    );
+    return noteDetail;
   }
 
   async update(userId: number, payload: UNoteDetailsDto): Promise<NoteDetails> {
     const { id } = payload;
-    return this.prismaService.noteDetails.update({
+    const noteDetail = await this.prismaService.noteDetails.update({
       where: { id, userId },
       data: payload,
     });
+    await this.redis._set(
+      `${KeyRedis.CONTENT_NOTE_DETAIL}_${noteDetail.id}`,
+      noteDetail.content,
+    );
+    return noteDetail;
   }
 
   async delete(userId: number, id: number): Promise<void> {
     await this.prismaService.noteDetails.delete({
       where: { id, userId },
     });
+    await this.redis._del(`${KeyRedis.CONTENT_NOTE_DETAIL}_${id}`);
   }
 }

@@ -50,7 +50,7 @@ export class UserRepository {
       where: { id },
     });
     const key = `${KeyRedis.USER}_${id}`;
-    await this.redis.getClient().del(key);
+    await this.redis._del(key);
   }
 
   async getAll(): Promise<User[]> {
@@ -68,23 +68,18 @@ export class UserRepository {
   }
 
   async getBanners(): Promise<Banners[]> {
-    let banners: Banners[];
-    const dataRedis = await this.redis.getClient().get(KeyRedis.BANNER);
-    if (dataRedis) {
-      banners = Helper.parseJson(dataRedis);
-    }
+    let banners: Banners[] = await this.redis._get(KeyRedis.BANNER);
     if (banners) return banners;
+
     banners = await this.prismaService.banners.findMany({
       orderBy: { sorting: 'asc' },
     });
-    const stringData = JSON.stringify(banners);
-    await this.redis.getClient().set(KeyRedis.BANNER, stringData);
+    await this.redis._set(KeyRedis.BANNER, banners);
     return banners;
   }
 
   private async setRedisUser(user: User) {
     const key = `${KeyRedis.USER}_${user.id}`;
-    const stringData = JSON.stringify(user);
-    await this.redis.getClient().set(key, stringData);
+    await this.redis._set(key, user);
   }
 }

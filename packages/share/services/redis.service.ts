@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 import { CONNECT_REDIS } from 'packages/common/constant';
 import { config } from 'packages/config';
+import { Helper } from 'packages/utils/helper';
 
 @Injectable()
 export class RedisService {
@@ -39,7 +40,26 @@ export class RedisService {
     }
   }
 
-  getClient(): Redis {
-    return this.redisClient;
+  async _get<T>(key: string): Promise<T> {
+    const result = await this.redisClient.get(key);
+    if (!result) return null;
+    return Helper.parseJson(result);
+  }
+
+  async _set<T>(key: string, data: T, ttl?: number): Promise<void> {
+    const stringData = JSON.stringify(data);
+    if (ttl && ttl > 0) {
+      await this.redisClient.set(key, stringData, 'EX', ttl);
+    } else {
+      await this.redisClient.set(key, stringData);
+    }
+  }
+
+  async _del(key: string): Promise<void> {
+    await this.redisClient.get(key);
+  }
+
+  async _setNx(key: string): Promise<number> {
+    return await this.redisClient.setnx(key, 'true');
   }
 }

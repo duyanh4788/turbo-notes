@@ -5,7 +5,6 @@ import * as crypto from 'crypto';
 import { User } from '@prisma/client';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { RedisService } from 'packages/share/services/redis.service';
-import { Helper } from 'packages/utils/helper';
 
 @Injectable()
 export class AuthMiddleware {
@@ -13,6 +12,7 @@ export class AuthMiddleware {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly redis: RedisService,
+    // eslint-disable-next-line no-useless-constructor, no-empty-function
   ) {}
 
   async canActivate(context: ExecutionContext) {
@@ -39,20 +39,14 @@ export class AuthMiddleware {
     try {
       const [header, payload, signature] = token.split('.');
       const key = `${KeyRedis.USER}_${userId}`;
-      let user: User;
-      const dataRedis = await this.redis.getClient().get(key);
+      let user: User = await this.redis._get(key);
 
-      if (dataRedis) {
-        user = Helper.parseJson(dataRedis);
-      }
-
-      if (!dataRedis) {
+      if (!user) {
         user = await this.prismaService.user.findUnique({
           where: { id: userId },
         });
         if (user) {
-          const stringData = JSON.stringify(user);
-          await this.redis.getClient().set(key, stringData);
+          await this.redis._set(key, user);
         }
       }
 

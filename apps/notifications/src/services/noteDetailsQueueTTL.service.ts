@@ -36,7 +36,7 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
 
     if (delayTime < 1000) {
       await this.nodeMailerService.sendSchedule(body);
-      await this.redis.getClient().del(mainKey);
+      await this.redis._del(mainKey);
       return;
     }
 
@@ -85,8 +85,8 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
           await this.nodeMailerService.sendSchedule(content);
           this.channel.ack(msg);
           await this.channel.deleteQueue(delayQueue);
-          await this.redis.getClient().del(delayQueue);
-          await this.redis.getClient().del(mainKey);
+          await this.redis._del(delayQueue);
+          await this.redis._del(mainKey);
         } catch (_) {
           this.channel.nack(msg, false, true);
         }
@@ -99,7 +99,7 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
   }
 
   private async markScheduleId(key: string): Promise<boolean> {
-    const isIdExist = await this.redis.getClient().setnx(key, 'true');
+    const isIdExist = await this.redis._setNx(key);
     return isIdExist !== 1;
   }
 
