@@ -62,11 +62,11 @@ export class UNoteDetailsDto {
 }
 
 export class ParamsDto {
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsString()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsString()
   noteId: string;
 }

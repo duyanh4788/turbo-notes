@@ -38,9 +38,9 @@ export class GCStorageService {
       .replace(/\r|\n/g, '_');
   }
 
-  async uploadFile(uploadedFile: FileGcs, destination: string): Promise<any> {
+  async uploadFile(uploadedFile: FileGcs): Promise<any> {
     const fileName =
-      this.setDestination(destination) + this.setFilename(uploadedFile);
+      this.setDestination(FLODER_GCS) + this.setFilename(uploadedFile);
     const file = this.bucket.file(fileName);
     try {
       await file.save(uploadedFile.buffer, {
@@ -63,5 +63,10 @@ export class GCStorageService {
     } catch (error) {
       Logger.error(error?.message);
     }
+  }
+
+  async readFile(fileName: string): Promise<any> {
+    const file = this.bucket.file(`${FLODER_GCS}/${fileName}`);
+    return file;
   }
 }

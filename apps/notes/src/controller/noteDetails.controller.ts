@@ -22,15 +22,10 @@ import {
 } from '../common/DTO/noteDetails.dto';
 import { SearchDto } from '../common/DTO/paging.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { GCStorageService } from 'src/services/gcstorage.service';
-
 @ApiTags('Notes Detail')
 @Controller('note-details')
 export class NoteDetailsController {
-  constructor(
-    private readonly noteDetailsService: NoteDetailsService,
-    private readonly gCStorageService: GCStorageService,
-  ) {}
+  constructor(private readonly noteDetailsService: NoteDetailsService) {}
 
   @Get('/search')
   @UseGuards(AuthMiddleware)
@@ -52,6 +47,16 @@ export class NoteDetailsController {
     @Req() req,
   ) {
     return await this.noteDetailsService.uploadFile(req.user.id, noteId, file);
+  }
+
+  @Get('/file/:id')
+  @UseGuards(AuthMiddleware)
+  async getFile(
+    @Req() req,
+    @Param('id') id: number,
+    @Query('noteId') noteId: string,
+  ) {
+    return this.noteDetailsService.getFile(req.user.id, { id, noteId });
   }
 
   @Get()

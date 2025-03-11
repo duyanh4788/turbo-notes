@@ -17,6 +17,7 @@ import {
   ResNotesDetails,
 } from '../common/interface/noteDetails.interface';
 import { GCStorageService } from './gcstorage.service';
+import { config } from 'packages/config';
 
 @Injectable()
 export class NoteDetailsService {
@@ -69,13 +70,13 @@ export class NoteDetailsService {
     if (!file) {
       throw new NotFoundException();
     }
-    const uploadFile = await this.gCStorageService.uploadFile(file, FLODER_GCS);
+    const uploadFile = await this.gCStorageService.uploadFile(file);
     if (!uploadFile || !uploadFile.publicUrl) {
       throw new NotFoundException();
     }
     const payload = new CNoteDetailsDto();
     payload.title = uploadFile.name.split('/')[1];
-    payload.content = uploadFile.publicUrl;
+    payload.content = uploadFile.name.split('/')[1];
     payload.noteId = noteId;
     payload.type = NoteDetailType.uploadFile;
     const detail = await this.notesDetailsRepository.create(payload, userId);
@@ -107,5 +108,10 @@ export class NoteDetailsService {
       await this.gCStorageService.removeFile(noteDetail.title);
     }
     return { id };
+  }
+
+  async getFile(userId: number, params: ParamsDto): Promise<string> {
+    const noteDetail = await this.findById(userId, params);
+    return `https://storage.googleapis.com/${config.GCS.BUCKET}/${FLODER_GCS}/${noteDetail.content}`;
   }
 }
