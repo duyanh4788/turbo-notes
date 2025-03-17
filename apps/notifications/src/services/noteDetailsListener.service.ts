@@ -70,7 +70,10 @@ export class NoteDetailsListenerService
         ) {
           payload.new_data.scheduleTime = payload.new_data['schedule_time'];
           payload.new_data.userId = payload.new_data['user_id'];
-          this.noteDetailQueueTTLService.PublishQueueDelay(payload.new_data);
+          this.noteDetailQueueTTLService.PublishQueueDelay(
+            payload.new_data,
+            payload.operation,
+          );
         }
         this.noteDetailsPubSubService.publishToRabbit(payload);
       });

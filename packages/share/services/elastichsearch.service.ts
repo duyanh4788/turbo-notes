@@ -13,13 +13,10 @@ export class ElasticsearchService {
   }
 
   async indexData(index: string, id: string, body: any) {
-    return await this.elasticsearchService.update({
+    return await this.elasticsearchService.index({
       index,
       id,
-      body: {
-        doc: body,
-        doc_as_upsert: true,
-      },
+      body,
     });
   }
 

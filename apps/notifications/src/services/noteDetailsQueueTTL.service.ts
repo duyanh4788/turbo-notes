@@ -4,6 +4,7 @@ import { RedisService } from 'packages/share/services/redis.service';
 import { RabbitService } from './rabbit.service';
 import {
   ExchangeRabbit,
+  OperationPSQL,
   RedisKey,
 } from 'src/common/interface/noteDetails.interface';
 import { NoteDetails } from '@prisma/client';
@@ -23,8 +24,12 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
     await this.ConsumerQueueDelay();
   }
 
-  async PublishQueueDelay(body: NoteDetails) {
+  async PublishQueueDelay(body: NoteDetails, operation: OperationPSQL) {
     const delayQueue = `${ExchangeRabbit.SCHEDULE_DELAY_QUEUE}_${body.id}`;
+    if (operation === OperationPSQL.DELETE && body.id) {
+      await this.deleteQueue(delayQueue);
+      return;
+    }
     const mainKey = `${RedisKey.NOTEDETAIL_SCHEDULE}_${body.id}`;
     const isProcessed = await this.markScheduleId(mainKey);
     if (isProcessed) {
