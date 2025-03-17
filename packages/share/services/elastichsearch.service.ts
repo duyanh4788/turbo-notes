@@ -13,14 +13,22 @@ export class ElasticsearchService {
   }
 
   async indexData(index: string, id: string, body: any) {
-    return await this.elasticsearchService.index({
+    return await this.elasticsearchService.update({
       index,
       id,
-      body,
+      body: {
+        doc: body,
+        doc_as_upsert: true,
+      },
     });
   }
 
   async deleteData(index: string, id: string) {
+    const checkExits = await this.elasticsearchService.exists({
+      index,
+      id,
+    });
+    if (!checkExits) return false;
     return await this.elasticsearchService.delete({
       index,
       id,
