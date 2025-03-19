@@ -32,6 +32,7 @@ The project utilizes the following technologies:
 ## Build & Deploy
 
 The build and deployment process is automated using **GitHub Actions CI/CD** and **Docker** on **Server linux**.
+![Flow 03](https://storage.googleapis.com/4p_backup_bucket/cms_content_media/flow06-1740465581249.png)
 
 ### Installation and Running Instructions
 
