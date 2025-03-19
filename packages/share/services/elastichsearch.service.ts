@@ -1,4 +1,3 @@
-import { SearchHit } from '@elastic/elasticsearch/lib/api/types';
 import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService as NestElasticsearchService } from '@nestjs/elasticsearch';
 import { TableName } from 'packages/common/constant';
@@ -16,7 +15,7 @@ export class ElasticsearchService {
     return await this.elasticsearchService.index({
       index,
       id,
-      body,
+      body: { content: body.content },
     });
   }
 
@@ -34,8 +33,11 @@ export class ElasticsearchService {
 
   async getAllData(index: string) {
     try {
-      const response = await this.elasticsearchService.search({
+      let allHits = [];
+      let response = await this.elasticsearchService.search({
         index,
+        scroll: '2m',
+        size: 1000,
         body: {
           query: {
             match_all: {},
@@ -43,47 +45,48 @@ export class ElasticsearchService {
         },
       });
 
-      return response.hits.hits;
+      while (response.hits.hits.length > 0) {
+        allHits = allHits.concat(response.hits.hits);
+        response = await this.elasticsearchService.scroll({
+          scroll_id: response._scroll_id,
+          scroll: '2m',
+        });
+      }
+
+      return allHits;
     } catch (error) {
       Logger.error(error);
       return [];
     }
   }
 
-  async search(index: TableName, query: string): Promise<SearchHit<unknown>[]> {
+  async search(index: TableName, query: string): Promise<{ id: string }[]> {
     try {
-      const fields = this.getSearchFields(index);
-
       const response = await this.elasticsearchService.search({
         index,
+        size: 50,
+        _source: ['id'],
         body: {
           query: {
-            multi_match: {
-              query,
-              fields,
-              type: 'cross_fields',
-              operator: 'or',
-              minimum_should_match: '50%',
+            bool: {
+              should: [
+                { match: { content: { query, fuzziness: 'AUTO', prefix_length: 2 } } },
+                { match_phrase: { content: query } },
+                { prefix: { content: query } },
+                { wildcard: { content: `${query}*` } },
+              ],
+              minimum_should_match: 1,
             },
           },
         },
       });
 
-      return response.hits.hits;
+      return response.hits.hits.map((hit) => ({
+        id: hit._id,
+      }));
     } catch (error) {
       Logger.error(error);
       return [];
-    }
-  }
-
-  private getSearchFields(index: TableName): string[] {
-    switch (index) {
-      case TableName.NOTES:
-        return ['label^2'];
-      case TableName.NOTE_DETAILS:
-        return ['content^2'];
-      default:
-        return ['content'];
     }
   }
 }

@@ -34,7 +34,7 @@ export class NoteDetailsService {
       text,
     );
     if (!hits || !hits.length) return { total: 0, noteDetails: [] };
-    const ids = hits.map((x) => Number(x._id));
+    const ids = hits.map((x) => Number(x.id));
     return this.notesDetailsRepository.getByIds(userId, ids);
   }
 

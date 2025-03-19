@@ -54,13 +54,21 @@ export class NoteDetailsListenerService
         if (!payload) return;
         if (!Object.values(OperationPSQL).includes(payload.operation)) return;
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
-        const content: string = await this.redis._get(
-          `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
-        );
-        if (!content) return;
 
-        if (payload.new_data) {
-          payload.new_data.content = content;
+        if (payload.operation !== OperationPSQL.DELETE) {
+          const content: string = await this.redis._get(
+            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
+          );
+          if (!content) return;
+          if (payload.new_data) {
+            payload.new_data.content = content;
+          }
+        }
+
+        if (payload.operation === OperationPSQL.DELETE) {
+          await this.redis._del(
+            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
+          );
         }
 
         if (
