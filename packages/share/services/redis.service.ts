@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import Redis from 'ioredis';
 import { CONNECT_REDIS } from 'packages/common/constant';
 import { config } from 'packages/config';
 import { Helper } from 'packages/utils/helper';
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleDestroy {
   private redisClient: Redis;
 
   constructor() {
@@ -71,10 +71,15 @@ export class RedisService {
   }
 
   async _del(key: string): Promise<void> {
-    await this.redisClient.get(key);
+    await this.redisClient.del(key);
   }
 
   async _setNx(key: string): Promise<number> {
     return await this.redisClient.setnx(key, 'true');
+  }
+
+  onModuleDestroy() {
+    this.redisClient.quit();
+    Logger.log('Redis connection closed');
   }
 }

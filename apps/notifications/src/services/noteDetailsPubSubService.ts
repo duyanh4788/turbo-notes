@@ -8,7 +8,7 @@ import {
   TableName,
 } from 'packages/common/constant';
 import { NoteDetailsLIstener } from 'packages/interface/queues.interface';
-import { RabbitService } from './rabbit.service';
+import { RabbitService } from 'packages/share/services/rabbit.service';
 
 @Injectable()
 export class NoteDetailsPubSubService implements OnModuleInit {

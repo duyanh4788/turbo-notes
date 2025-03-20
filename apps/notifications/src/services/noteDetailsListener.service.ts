@@ -45,6 +45,11 @@ export class NoteDetailsListenerService
   }
 
   private async connectPostgres() {
+    if (this.client && this.client.readyForQuery) {
+      Logger.warn('PostgreSQL already connected, skipping reconnection...');
+      return;
+    }
+
     try {
       await this.client.connect();
       Logger.log('Listening for database changes...');
@@ -88,7 +93,11 @@ export class NoteDetailsListenerService
       });
 
       this.client.on('error', async (err) => {
-        Logger.error('PostgreSQL connection lost, retrying...', err);
+        Logger.error('PostgreSQL connection error:', err);
+        await this.client
+          .end()
+          .catch(() => Logger.warn('Failed to close client.'));
+        this.client.removeAllListeners();
         await this.retryPostgresListener();
       });
 
