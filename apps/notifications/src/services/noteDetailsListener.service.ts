@@ -4,16 +4,17 @@ import {
   OnModuleDestroy,
   Logger,
 } from '@nestjs/common';
-import { KeyRedis, TableName } from 'packages/common/constant';
+import {
+  KeyRedis,
+  OperationPSQL,
+  TableName,
+  ValueListener,
+} from 'packages/common/constant';
 import { config } from 'packages/config';
 import { Helper } from 'packages/utils/helper';
 import { Client } from 'pg';
 import { NoteDetailsPubSubService } from './noteDetailsPubSubService';
-import {
-  NoteDetailsLIstener,
-  OperationPSQL,
-  ValueListener,
-} from 'src/common/interface/noteDetails.interface';
+import { NoteDetailsLIstener } from 'packages/interface/queues.interface';
 import { NoteDetailType } from '@prisma/client';
 import { NoteDetailQueueTTLService } from './noteDetailsQueueTTL.service';
 import { RedisService } from 'packages/share/services/redis.service';
@@ -56,7 +57,7 @@ export class NoteDetailsListenerService
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
 
         if (payload.operation !== OperationPSQL.DELETE) {
-          const content: string = await this.redis._get(
+          const content: string = await this.redis._getString(
             `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
           );
           if (!content) return;

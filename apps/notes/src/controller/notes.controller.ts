@@ -13,8 +13,8 @@ import {
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { NotesService } from 'src/services/notes.service';
-import { CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
-import { CountDto, PagingDto } from '../common/DTO/paging.dto';
+import { CNotesDto, UNotesDto } from '../DTO/notes.dto';
+import { CountDto, PagingDto } from '../DTO/paging.dto';
 
 @ApiTags('Notes')
 @Controller('notes')

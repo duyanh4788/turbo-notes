@@ -2,10 +2,8 @@ import { Bucket, Storage } from '@google-cloud/storage';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { config } from 'packages/config';
 import { parse } from 'path';
-import {
-  FileGcs,
-  FLODER_GCS,
-} from 'src/common/interface/noteDetails.interface';
+import { FileGcs } from 'packages/interface/noteDetails.interface';
+import { FLODER_GCS } from 'packages/common/constant';
 
 @Injectable()
 export class GCStorageService {

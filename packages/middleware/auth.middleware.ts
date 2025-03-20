@@ -8,12 +8,14 @@ import { RedisService } from 'packages/share/services/redis.service';
 
 @Injectable()
 export class AuthMiddleware {
-  // eslint-disable-next-line no-useless-constructor, no-empty-function
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly redis: RedisService,
-    // eslint-disable-next-line no-useless-constructor, no-empty-function
-  ) {}
+  private prismaService: PrismaService;
+
+  private redis: RedisService;
+
+  constructor(prismaService: PrismaService, redis: RedisService) {
+    this.prismaService = prismaService;
+    this.redis = redis;
+  }
 
   async canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
@@ -39,14 +41,14 @@ export class AuthMiddleware {
     try {
       const [header, payload, signature] = token.split('.');
       const key = `${KeyRedis.USER}_${userId}`;
-      let user: User = await this.redis._get(key);
+      let user: User = await this.redis._getString(key);
 
       if (!user) {
         user = await this.prismaService.user.findUnique({
           where: { id: userId },
         });
         if (user) {
-          await this.redis._set(key, user);
+          await this.redis._setString(key, user);
         }
       }
 

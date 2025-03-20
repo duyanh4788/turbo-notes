@@ -40,13 +40,28 @@ export class RedisService {
     }
   }
 
-  async _get<T>(key: string): Promise<T> {
+  async _getString<T>(key: string): Promise<T> {
     const result = await this.redisClient.get(key);
     if (!result) return null;
     return Helper.parseJson(result);
   }
 
-  async _set<T>(key: string, data: T, ttl?: number): Promise<void> {
+  async _setString<T>(key: string, data: T, ttl?: number): Promise<void> {
+    const stringData = JSON.stringify(data);
+    if (ttl && ttl > 0) {
+      await this.redisClient.set(key, stringData, 'EX', ttl);
+    } else {
+      await this.redisClient.set(key, stringData);
+    }
+  }
+
+  async _getHash<T>(key: string): Promise<T> {
+    const result = await this.redisClient.get(key);
+    if (!result) return null;
+    return Helper.parseJson(result);
+  }
+
+  async _setHash<T>(key: string, data: T, ttl?: number): Promise<void> {
     const stringData = JSON.stringify(data);
     if (ttl && ttl > 0) {
       await this.redisClient.set(key, stringData, 'EX', ttl);

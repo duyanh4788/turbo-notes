@@ -2,14 +2,14 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Channel } from 'amqplib';
 import { RedisService } from 'packages/share/services/redis.service';
 import { RabbitService } from './rabbit.service';
+import { NoteDetails } from '@prisma/client';
+import { Helper } from 'packages/utils/helper';
+import { NodeMailerService } from './nodeMailer.service';
 import {
   ExchangeRabbit,
   OperationPSQL,
   RedisKey,
-} from 'src/common/interface/noteDetails.interface';
-import { NoteDetails } from '@prisma/client';
-import { Helper } from 'packages/utils/helper';
-import { NodeMailerService } from './nodeMailer.service';
+} from 'packages/common/constant';
 @Injectable()
 export class NoteDetailQueueTTLService implements OnModuleInit {
   private channel: Channel;

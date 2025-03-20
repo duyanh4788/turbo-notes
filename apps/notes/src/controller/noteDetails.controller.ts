@@ -19,8 +19,8 @@ import {
   CNoteDetailsDto,
   QueryDto,
   UNoteDetailsDto,
-} from '../common/DTO/noteDetails.dto';
-import { SearchDto } from '../common/DTO/paging.dto';
+} from '../DTO/noteDetails.dto';
+import { SearchDto } from '../DTO/paging.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 @ApiTags('Notes Detail')
 @Controller('note-details')

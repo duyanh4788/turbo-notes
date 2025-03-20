@@ -6,8 +6,8 @@ import {
   ParamsDto,
   QueryDto,
   UNoteDetailsDto,
-} from '../common/DTO/noteDetails.dto';
-import { ResNotesDetails } from '../common/interface/noteDetails.interface';
+} from '../DTO/noteDetails.dto';
+import { ResNotesDetails } from 'packages/interface/noteDetails.interface';
 import { RedisService } from 'packages/share/services/redis.service';
 import { KeyRedis } from 'packages/common/constant';
 
@@ -71,7 +71,7 @@ export class NotesDetailsRepository {
     const noteDetail = await this.prismaService.noteDetails.create({
       data: { ...payload, userId },
     });
-    await this.redis._set(
+    await this.redis._setString(
       `${KeyRedis.CONTENT_NOTE_DETAIL}_${noteDetail.id}`,
       noteDetail.content,
     );
@@ -84,7 +84,7 @@ export class NotesDetailsRepository {
       where: { id, userId },
       data: payload,
     });
-    await this.redis._set(
+    await this.redis._setString(
       `${KeyRedis.CONTENT_NOTE_DETAIL}_${noteDetail.id}`,
       noteDetail.content,
     );

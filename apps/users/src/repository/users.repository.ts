@@ -4,7 +4,7 @@ import { KeyRedis } from 'packages/common/constant';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { RedisService } from 'packages/share/services/redis.service';
 import { Helper } from 'packages/utils/helper';
-import { CreateUserDto } from 'src/common/DTO/users.dto';
+import { CreateUserDto } from 'src/DTO/users.dto';
 
 @Injectable()
 export class UserRepository {
@@ -68,18 +68,18 @@ export class UserRepository {
   }
 
   async getBanners(): Promise<Banners[]> {
-    let banners: Banners[] = await this.redis._get(KeyRedis.BANNER);
+    let banners: Banners[] = await this.redis._getString(KeyRedis.BANNER);
     if (banners) return banners;
 
     banners = await this.prismaService.banners.findMany({
       orderBy: { sorting: 'asc' },
     });
-    await this.redis._set(KeyRedis.BANNER, banners);
+    await this.redis._setString(KeyRedis.BANNER, banners);
     return banners;
   }
 
   private async setRedisUser(user: User) {
     const key = `${KeyRedis.USER}_${user.id}`;
-    await this.redis._set(key, user);
+    await this.redis._setString(key, user);
   }
 }

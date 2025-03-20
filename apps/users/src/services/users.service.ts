@@ -6,7 +6,7 @@ import {
   CountNoteDto,
   CreateUserDto,
   DecreaseTotalDto,
-} from 'src/common/DTO/users.dto';
+} from 'src/DTO/users.dto';
 import { UserRepository } from 'src/repository/users.repository';
 
 @Injectable()

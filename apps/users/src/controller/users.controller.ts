@@ -13,11 +13,7 @@ import { config } from 'packages/config';
 import { AuthMiddleware } from 'packages/middleware/auth.middleware';
 import { GrpcInterceptor } from 'packages/middleware/grpc.interceptor';
 import { from, Observable } from 'rxjs';
-import {
-  CountNoteDto,
-  DecreaseTotalDto,
-  GetByIdDto,
-} from 'src/common/DTO/users.dto';
+import { CountNoteDto, DecreaseTotalDto, GetByIdDto } from 'src/DTO/users.dto';
 import { GoogleAuthGuard } from 'src/middleware/google-auth-guard.service';
 import { UsersService } from 'src/services/users.service';
 

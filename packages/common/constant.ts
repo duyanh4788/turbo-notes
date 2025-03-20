@@ -39,3 +39,29 @@ export enum TableName {
   NOTES = 'notes',
   NOTE_DETAILS = 'note_details',
 }
+
+export enum ExchangeRabbit {
+  NOTE_DETAILS_EXCHANGE = 'NOTE_DETAILS_EXCHANGE',
+  NOTE_DETAILS_QUEUE = 'NOTE_DETAILS_QUEUE',
+  SCHEDULE_MAIN_EX = 'SCHEDULE_MAIN_EX',
+  SCHEDULE_DELAY_EX = 'SCHEDULE_DELAY_EX',
+  SCHEDULE_MAIN_QUEUE = 'SCHEDULE_MAIN_QUEUE',
+  SCHEDULE_DELAY_QUEUE = 'SCHEDULE_DELAY_QUEUE',
+  SCHEDULE_DELAY = 'SCHEDULE_DELAY',
+}
+
+export enum OperationPSQL {
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+}
+
+export enum ValueListener {
+  NOTE_DETAIL_CHANNEL = 'note_detail_channel',
+}
+
+export enum RedisKey {
+  NOTEDETAIL_SCHEDULE = 'NOTEDETAIL_SCHEDULE',
+}
+
+export const FLODER_GCS = 'mms_content_media';

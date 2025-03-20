@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TypeCount } from 'packages/common/constant';
 import { NotesRepository } from 'src/repository/notes.repository';
-import { CNotesDto, UNotesDto } from '../common/DTO/notes.dto';
-import { PagingDto } from '../common/DTO/paging.dto';
-import { CountRes, Notes, ResNotes } from '../common/interface/notes.interface';
+import { CNotesDto, UNotesDto } from '../DTO/notes.dto';
+import { PagingDto } from '../DTO/paging.dto';
+import { CountRes, Notes, ResNotes } from 'packages/interface/notes.interface';
 import { UsersGRPC } from '../grpc/users/users.grpc';
 import { GCStorageService } from './gcstorage.service';
 

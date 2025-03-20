@@ -2,12 +2,12 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
 import { Channel } from 'amqplib';
 import { Helper } from 'packages/utils/helper';
-import { TableName } from 'packages/common/constant';
 import {
-  NoteDetailsLIstener,
-  OperationPSQL,
   ExchangeRabbit,
-} from 'src/common/interface/noteDetails.interface';
+  OperationPSQL,
+  TableName,
+} from 'packages/common/constant';
+import { NoteDetailsLIstener } from 'packages/interface/queues.interface';
 import { RabbitService } from './rabbit.service';
 
 @Injectable()

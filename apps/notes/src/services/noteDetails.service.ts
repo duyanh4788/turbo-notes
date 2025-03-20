@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { NoteDetailType, User } from '@prisma/client';
-import { TableName, TypeCount } from 'packages/common/constant';
+import { FLODER_GCS, TableName, TypeCount } from 'packages/common/constant';
 import { ElasticsearchService } from 'packages/share/services/elastichsearch.service';
 import { NotesDetailsRepository } from 'src/repository/noteDetails.repository';
 import {
@@ -8,14 +8,13 @@ import {
   ParamsDto,
   QueryDto,
   UNoteDetailsDto,
-} from '../common/DTO/noteDetails.dto';
+} from '../DTO/noteDetails.dto';
 import { UsersGRPC } from '../grpc/users/users.grpc';
 import {
   FileGcs,
-  FLODER_GCS,
   NoteDetails,
   ResNotesDetails,
-} from '../common/interface/noteDetails.interface';
+} from 'packages/interface/noteDetails.interface';
 import { GCStorageService } from './gcstorage.service';
 import { config } from 'packages/config';
 
