@@ -85,7 +85,13 @@ export class RedisService implements OnModuleDestroy {
   }
 
   async _inDecHash(keyMain: string, keyHash: string, amount: number): Promise<void> {
-    await this.redisClient.hincrby(keyMain, keyHash, amount);
+    const script = `
+        local current = redis.call('HGET', KEYS[1], ARGV[1]) or 0
+        current = current + tonumber(ARGV[2])
+        redis.call('HSET', KEYS[1], ARGV[1], current)
+        return current
+    `;
+    await this.redisClient.eval(script, 1, keyMain, keyHash, amount);
   }
 
   async _del(key: string): Promise<void> {
