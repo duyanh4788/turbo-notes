@@ -16,9 +16,9 @@ async function bootstrap() {
   app.enableCors();
 
   await app.listen(config.NOTES_PORT, () => {
-    Logger.log(`app Notes listen port: ${config.NOTES_PORT}`);
+    Logger.log(`App Notes listen port: ${config.NOTES_PORT}`);
     Logger.log(
-      `view swagger http://localhost:${config.NOTES_PORT}${config.SWAGGER_NOTES_PATH}`,
+      `View swagger http://localhost:${config.NOTES_PORT}${config.SWAGGER_NOTES_PATH}`,
     );
   });
 }
