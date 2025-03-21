@@ -45,28 +45,17 @@ export class UserRepository {
     return user;
   }
 
-  async updateCount(userId: number, typeUpdate: TypeCount): Promise<void> {
-    let notesCount = 0;
-    let noteDetailsCount = 0;
-    if (
-      typeUpdate === TypeCount.NOTE_COUNT ||
-      typeUpdate === TypeCount.TOTAL_COUNT
-    ) {
-      notesCount = await this.redis._getHash(
-        `${KeyRedis.USER}_${userId}`,
-        KeyHasRedis.NOTE_COUNT,
-      );
-    }
+  async updateCount(userId: number): Promise<void> {
+    const notesCount: number = await this.redis._getHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_COUNT,
+    );
 
-    if (
-      typeUpdate === TypeCount.NOTE_DETAIL_COUNT ||
-      typeUpdate === TypeCount.TOTAL_COUNT
-    ) {
-      noteDetailsCount = await this.redis._getHash(
-        `${KeyRedis.USER}_${userId}`,
-        KeyHasRedis.NOTE_DETAIL_COUNT,
-      );
-    }
+    const noteDetailsCount: number = await this.redis._getHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_DETAIL_COUNT,
+    );
+
     const user = await this.prismaService.user.update({
       where: { id: userId },
       data: {
@@ -112,6 +101,12 @@ export class UserRepository {
 
   private async setHashRedisUser(user: User) {
     const keyMain = `${KeyRedis.USER}_${user.id}`;
-    await this.redis._setHash(keyMain, KeyHasRedis.USER_DATA, user);
+    const userData = {
+      [KeyHasRedis.USER_DATA]: JSON.stringify(user),
+      [KeyHasRedis.NOTE_COUNT]: user.notesCount.toString(),
+      [KeyHasRedis.NOTE_DETAIL_COUNT]: user.noteDetailsCount.toString(),
+    };
+
+    await this.redis._setHashMain(keyMain, userData);
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Banners, User } from '@prisma/client';
-import { TypeCount } from 'packages/common/constant';
 import { Observable } from 'rxjs';
 import {
   CountNoteDto,
@@ -40,18 +39,12 @@ export class UsersService {
   }
 
   async CountNotes(payload: CountNoteDto): Promise<Observable<void>> {
-    await this.userRepository.updateCount(
-      Number(payload.userId),
-      TypeCount.NOTE_COUNT,
-    );
+    await this.userRepository.updateCount(Number(payload.userId));
     return;
   }
 
   async CountNoteDetails(payload: CountNoteDto): Promise<Observable<void>> {
-    await this.userRepository.updateCount(
-      Number(payload.userId),
-      TypeCount.NOTE_DETAIL_COUNT,
-    );
+    await this.userRepository.updateCount(Number(payload.userId));
     return;
   }
 
@@ -63,10 +56,7 @@ export class UsersService {
       (!Number(totalNotes) && Number(totalNoteDetails))
     )
       return;
-    await this.userRepository.updateCount(
-      Number(userId),
-      TypeCount.TOTAL_COUNT,
-    );
+    await this.userRepository.updateCount(Number(userId));
     return;
   }
 

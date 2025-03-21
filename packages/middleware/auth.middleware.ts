@@ -40,17 +40,7 @@ export class AuthMiddleware {
   private async decodeToken(userId: number, token: string): Promise<User> {
     try {
       const [header, payload, signature] = token.split('.');
-      const keyMain = `${KeyRedis.USER}_${userId}`;
-      let user: User = await this.redis._getHash(keyMain, KeyHasRedis.USER_DATA);
-
-      if (!user) {
-        user = await this.prismaService.user.findUnique({
-          where: { id: userId },
-        });
-        if (user) {
-          await this.redis._setHash(keyMain, KeyHasRedis.USER_DATA, user);
-        }
-      }
+      const user: User = await this.getUser(userId);
 
       if (!user) {
         throw new UnauthorizedException();
@@ -69,5 +59,25 @@ export class AuthMiddleware {
     } catch (_) {
       throw new UnauthorizedException();
     }
+  }
+
+  private async getUser(userId: number): Promise<User> {
+    const keyMain = `${KeyRedis.USER}_${userId}`;
+    let user: User = await this.redis._getHash(keyMain, KeyHasRedis.USER_DATA);
+
+    if (!user) {
+      user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+      if (user) {
+        const userData = {
+          [KeyHasRedis.USER_DATA]: JSON.stringify(user),
+          [KeyHasRedis.NOTE_COUNT]: user.notesCount.toString(),
+          [KeyHasRedis.NOTE_DETAIL_COUNT]: user.noteDetailsCount.toString(),
+        };
+        await this.redis._setHashMain(keyMain, userData);
+      }
+    }
+    return user;
   }
 }

@@ -65,6 +65,17 @@ export class RedisService implements OnModuleDestroy {
     }
   }
 
+  async _setHashMain<T extends Record<string, any>>(
+    keyMain: string,
+    stringData: T,
+    ttl?: number,
+  ): Promise<void> {
+    await this.redisClient.hset(keyMain, ...Object.entries(stringData).flat());
+    if (ttl && ttl > 0) {
+      await this.redisClient.expire(keyMain, ttl);
+    }
+  }
+
   async _setHash<T>(keyMain: string, keyHash: string, data: T, ttl?: number): Promise<void> {
     const stringData = JSON.stringify(data);
     await this.redisClient.hset(keyMain, keyHash, stringData);
