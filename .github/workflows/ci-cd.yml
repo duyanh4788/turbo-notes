@@ -4,6 +4,17 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Build normal"
+        required: true
+        type: choice
+        options:
+          - all
+          - users
+          - notes
+          - notifications
 
 jobs:
   detect-changes:
@@ -36,7 +47,7 @@ jobs:
   build-users:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.users == 'true'
+    if: needs.detect-changes.outputs.users == 'true' || github.event.inputs.service == 'users' || github.event.inputs.service == 'all'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -71,7 +82,7 @@ jobs:
   build-notes:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.notes == 'true'
+    if: needs.detect-changes.outputs.notes == 'true' || github.event.inputs.service == 'notes' || github.event.inputs.service == 'all'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -100,7 +111,7 @@ jobs:
   build-notifications:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.notifications == 'true'
+    if: needs.detect-changes.outputs.notifications == 'true' || github.event.inputs.service == 'notifications' || github.event.inputs.service == 'all'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
