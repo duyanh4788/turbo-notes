@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Banners, User } from '@prisma/client';
-import { KeyRedis } from 'packages/common/constant';
+import { KeyHasRedis, KeyRedis, TypeCount } from 'packages/common/constant';
 import { PrismaService } from 'packages/share/services/prisma.service';
 import { RedisService } from 'packages/share/services/redis.service';
 import { Helper } from 'packages/utils/helper';
@@ -20,7 +20,7 @@ export class UserRepository {
     const user = await this.prismaService.user.create({
       data,
     });
-    await this.setRedisUser(user);
+    await this.setHashRedisUser(user);
     return user;
   }
 
@@ -41,16 +41,48 @@ export class UserRepository {
       where: { id },
       data,
     });
-    await this.setRedisUser(user);
+    await this.setHashRedisUser(user);
     return user;
+  }
+
+  async updateCount(userId: number, typeUpdate: TypeCount): Promise<void> {
+    let notesCount = 0;
+    let noteDetailsCount = 0;
+    if (
+      typeUpdate === TypeCount.NOTE_COUNT ||
+      typeUpdate === TypeCount.TOTAL_COUNT
+    ) {
+      notesCount = await this.redis._getHash(
+        `${KeyRedis.USER}_${userId}`,
+        KeyHasRedis.NOTE_COUNT,
+      );
+    }
+
+    if (
+      typeUpdate === TypeCount.NOTE_DETAIL_COUNT ||
+      typeUpdate === TypeCount.TOTAL_COUNT
+    ) {
+      noteDetailsCount = await this.redis._getHash(
+        `${KeyRedis.USER}_${userId}`,
+        KeyHasRedis.NOTE_DETAIL_COUNT,
+      );
+    }
+    const user = await this.prismaService.user.update({
+      where: { id: userId },
+      data: {
+        notesCount: Math.max(notesCount, 0),
+        noteDetailsCount: Math.max(noteDetailsCount, 0),
+      },
+    });
+    await this.setHashRedisUser(user);
+    return;
   }
 
   async delete(id: number): Promise<void> {
     await this.prismaService.user.delete({
       where: { id },
     });
-    const key = `${KeyRedis.USER}_${id}`;
-    await this.redis._del(key);
+    await this.redis._del(`${KeyRedis.USER}_${id}`);
   }
 
   async getAll(): Promise<User[]> {
@@ -63,7 +95,7 @@ export class UserRepository {
       where: { id: data.id },
       data,
     });
-    await this.setRedisUser(user);
+    await this.setHashRedisUser(user);
     return user;
   }
 
@@ -78,8 +110,8 @@ export class UserRepository {
     return banners;
   }
 
-  private async setRedisUser(user: User) {
-    const key = `${KeyRedis.USER}_${user.id}`;
-    await this.redis._setString(key, user);
+  private async setHashRedisUser(user: User) {
+    const keyMain = `${KeyRedis.USER}_${user.id}`;
+    await this.redis._setHash(keyMain, KeyHasRedis.USER_DATA, user);
   }
 }

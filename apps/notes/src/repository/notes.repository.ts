@@ -3,10 +3,15 @@ import { PrismaService } from 'packages/share/services/prisma.service';
 import { CNotesDto, UNotesDto } from '../DTO/notes.dto';
 import { PagingDto } from '../DTO/paging.dto';
 import { CountRes, Notes, ResNotes } from 'packages/interface/notes.interface';
+import { RedisService } from 'packages/share/services/redis.service';
+import { KeyHasRedis, KeyRedis } from 'packages/common/constant';
 
 @Injectable()
 export class NotesRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async getAll(userId: number, query: PagingDto): Promise<ResNotes> {
     const { skip = 0, limit = 10 } = query;
@@ -84,14 +89,19 @@ export class NotesRepository {
     });
 
     const newSorting = (maxSorting._max.sorting || 0) + 1;
-
-    return this.prismaService.notes.create({
+    const newNote = await this.prismaService.notes.create({
       data: {
         ...payload,
         userId,
         sorting: newSorting,
       },
     });
+    await this.redis._inDecHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_COUNT,
+      1,
+    );
+    return newNote;
   }
 
   async update(userId: number, payload: UNotesDto): Promise<Notes> {
@@ -162,7 +172,16 @@ export class NotesRepository {
     const totalNotes = Number(result[0]?.deletedNotes) || 0;
     const totalNoteDetails = Number(result[0]?.deletedNoteDetails) || 0;
     const titleNoteDetails = result[0]?.titleDeletedNoteDetails || [];
-
+    await this.redis._inDecHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_COUNT,
+      -totalNotes,
+    );
+    await this.redis._inDecHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_DETAIL_COUNT,
+      -totalNoteDetails,
+    );
     return { totalNotes, totalNoteDetails, userId, titleNoteDetails };
   }
 

@@ -6,8 +6,8 @@ import { Helper } from 'packages/utils/helper';
 import { NodeMailerService } from './nodeMailer.service';
 import {
   ExchangeRabbit,
+  KeyRedis,
   OperationPSQL,
-  RedisKey,
 } from 'packages/common/constant';
 import { RabbitService } from 'packages/share/services/rabbit.service';
 @Injectable()
@@ -30,7 +30,7 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
       await this.deleteQueue(delayQueue);
       return;
     }
-    const mainKey = `${RedisKey.NOTEDETAIL_SCHEDULE}_${body.id}`;
+    const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${body.id}`;
     const isProcessed = await this.markScheduleId(mainKey);
     if (isProcessed) {
       await this.deleteQueue(delayQueue);
@@ -81,7 +81,7 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
         try {
           const content: NoteDetails = Helper.parseJson(msg.content.toString());
           const delayQueue = `${ExchangeRabbit.SCHEDULE_DELAY_QUEUE}_${content.id}`;
-          const mainKey = `${RedisKey.NOTEDETAIL_SCHEDULE}_${content.id}`;
+          const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${content.id}`;
           const isProcessed = await this.markScheduleId(delayQueue);
           if (isProcessed) {
             this.channel.ack(msg);

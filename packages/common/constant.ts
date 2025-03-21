@@ -11,6 +11,13 @@ export enum KeyRedis {
   USER = '_USER',
   BANNER = '_BANNER',
   CONTENT_NOTE_DETAIL = '_CONTENT_NOTE_DETAIL',
+  NOTEDETAIL_SCHEDULE = 'NOTEDETAIL_SCHEDULE',
+}
+
+export enum KeyHasRedis {
+  USER_DATA = 'USER_DATA',
+  NOTE_COUNT = 'NOTE_COUNT',
+  NOTE_DETAIL_COUNT = 'NOTE_DETAIL_COUNT',
 }
 
 export enum AuthHeaders {
@@ -27,6 +34,9 @@ export enum TypeResponse {
 export enum TypeCount {
   IN_CREASE = 'IN_CREASE',
   DE_CREASE = 'DE_CREASE',
+  NOTE_COUNT = 'NOTE_COUNT',
+  NOTE_DETAIL_COUNT = 'NOTE_DETAIL_COUNT',
+  TOTAL_COUNT = 'TOTAL_COUNT',
 }
 
 export enum PackageService {
@@ -58,10 +68,6 @@ export enum OperationPSQL {
 
 export enum ValueListener {
   NOTE_DETAIL_CHANNEL = 'note_detail_channel',
-}
-
-export enum RedisKey {
-  NOTEDETAIL_SCHEDULE = 'NOTEDETAIL_SCHEDULE',
 }
 
 export const FLODER_GCS = 'mms_content_media';

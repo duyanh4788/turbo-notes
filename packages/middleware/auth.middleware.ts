@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthHeaders, KeyRedis } from 'packages/common/constant';
+import { AuthHeaders, KeyHasRedis, KeyRedis } from 'packages/common/constant';
 import { config } from 'packages/config';
 import * as crypto from 'crypto';
 import { User } from '@prisma/client';
@@ -40,15 +40,15 @@ export class AuthMiddleware {
   private async decodeToken(userId: number, token: string): Promise<User> {
     try {
       const [header, payload, signature] = token.split('.');
-      const key = `${KeyRedis.USER}_${userId}`;
-      let user: User = await this.redis._getString(key);
+      const keyMain = `${KeyRedis.USER}_${userId}`;
+      let user: User = await this.redis._getHash(keyMain, KeyHasRedis.USER_DATA);
 
       if (!user) {
         user = await this.prismaService.user.findUnique({
           where: { id: userId },
         });
         if (user) {
-          await this.redis._setString(key, user);
+          await this.redis._setHash(keyMain, KeyHasRedis.USER_DATA, user);
         }
       }
 

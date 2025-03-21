@@ -9,7 +9,7 @@ import {
 } from '../DTO/noteDetails.dto';
 import { ResNotesDetails } from 'packages/interface/noteDetails.interface';
 import { RedisService } from 'packages/share/services/redis.service';
-import { KeyRedis } from 'packages/common/constant';
+import { KeyHasRedis, KeyRedis } from 'packages/common/constant';
 
 @Injectable()
 export class NotesDetailsRepository {
@@ -75,6 +75,11 @@ export class NotesDetailsRepository {
       `${KeyRedis.CONTENT_NOTE_DETAIL}_${noteDetail.id}`,
       noteDetail.content,
     );
+    await this.redis._inDecHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_DETAIL_COUNT,
+      1,
+    );
     return noteDetail;
   }
 
@@ -96,5 +101,10 @@ export class NotesDetailsRepository {
       where: { id, userId },
     });
     await this.redis._del(`${KeyRedis.CONTENT_NOTE_DETAIL}_${id}`);
+    await this.redis._inDecHash(
+      `${KeyRedis.USER}_${userId}`,
+      KeyHasRedis.NOTE_DETAIL_COUNT,
+      -1,
+    );
   }
 }

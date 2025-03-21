@@ -40,54 +40,33 @@ export class UsersService {
   }
 
   async CountNotes(payload: CountNoteDto): Promise<Observable<void>> {
-    const { userId, typeCount } = payload;
-    const userIdNumber = Number(userId);
-    const user = await this.findById(userIdNumber);
-    user.notesCount =
-      typeCount === TypeCount.IN_CREASE
-        ? user.notesCount + 1
-        : user.notesCount - 1;
-    if (user.notesCount < 0) {
-      user.notesCount = 0;
-    }
-    await this.userRepository.update(userIdNumber, user);
+    await this.userRepository.updateCount(
+      Number(payload.userId),
+      TypeCount.NOTE_COUNT,
+    );
     return;
   }
 
   async CountNoteDetails(payload: CountNoteDto): Promise<Observable<void>> {
-    const { userId, typeCount } = payload;
-    const userIdNumber = Number(userId);
-    const user = await this.findById(userIdNumber);
-    user.noteDetailsCount =
-      typeCount === TypeCount.IN_CREASE
-        ? user.noteDetailsCount + 1
-        : user.noteDetailsCount - 1;
-    if (user.noteDetailsCount < 0) {
-      user.noteDetailsCount = 0;
-    }
-    await this.userRepository.update(userIdNumber, user);
+    await this.userRepository.updateCount(
+      Number(payload.userId),
+      TypeCount.NOTE_DETAIL_COUNT,
+    );
     return;
   }
 
   async DecreaseTotal(payload: DecreaseTotalDto): Promise<Observable<void>> {
     const { userId, totalNotes, totalNoteDetails } = payload;
-    if (!totalNotes || !totalNoteDetails) return;
-    const userIdNumber = Number(userId);
-    const totalNoteNumber = Number(totalNotes);
-    const totalNoteDetailNumber = Number(totalNoteDetails);
-    if (!totalNoteNumber && !totalNoteDetailNumber) return;
-
-    const user = await this.findById(userIdNumber);
-    user.notesCount = user.notesCount - totalNoteNumber;
-    user.noteDetailsCount = user.noteDetailsCount - totalNoteDetailNumber;
-
-    if (user.notesCount < 0) {
-      user.notesCount = 0;
-    }
-    if (user.noteDetailsCount < 0) {
-      user.noteDetailsCount = 0;
-    }
-    await this.userRepository.update(userIdNumber, user);
+    if (
+      !totalNotes ||
+      !totalNoteDetails ||
+      (!Number(totalNotes) && Number(totalNoteDetails))
+    )
+      return;
+    await this.userRepository.updateCount(
+      Number(userId),
+      TypeCount.TOTAL_COUNT,
+    );
     return;
   }
 

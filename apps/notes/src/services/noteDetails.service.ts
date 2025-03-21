@@ -102,10 +102,10 @@ export class NoteDetailsService {
     const noteDetail = await this.findById(userId, params);
     const { id } = params;
     await this.notesDetailsRepository.delete(userId, id);
-    await this.usersGRPC.CountNoteDetails(userId, TypeCount.DE_CREASE);
     if (noteDetail.type === NoteDetailType.uploadFile) {
       await this.gCStorageService.removeFile(noteDetail.title);
     }
+    await this.usersGRPC.CountNoteDetails(userId, TypeCount.DE_CREASE);
     return { id };
   }
 
