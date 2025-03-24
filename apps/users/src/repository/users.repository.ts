@@ -20,7 +20,7 @@ export class UserRepository {
     const user = await this.prismaService.user.create({
       data,
     });
-    await this.setHashRedisUser(user);
+    await this.setHashRedisUser(user, true);
     return user;
   }
 
@@ -55,7 +55,6 @@ export class UserRepository {
       `${KeyRedis.USER}_${userId}`,
       KeyHasRedis.NOTE_DETAIL_COUNT,
     );
-
     const user = await this.prismaService.user.update({
       where: { id: userId },
       data: {
@@ -99,14 +98,18 @@ export class UserRepository {
     return banners;
   }
 
-  private async setHashRedisUser(user: User) {
+  private async setHashRedisUser(user: User, isAll: boolean = false) {
     const keyMain = `${KeyRedis.USER}_${user.id}`;
-    const userData = {
-      [KeyHasRedis.USER_DATA]: JSON.stringify(user),
-      [KeyHasRedis.NOTE_COUNT]: user.notesCount.toString(),
-      [KeyHasRedis.NOTE_DETAIL_COUNT]: user.noteDetailsCount.toString(),
-    };
-
-    await this.redis._setHashMain(keyMain, userData);
+    if (isAll) {
+      const userData = {
+        [KeyHasRedis.USER_DATA]: JSON.stringify(user),
+        [KeyHasRedis.NOTE_COUNT]: user.notesCount.toString(),
+        [KeyHasRedis.NOTE_DETAIL_COUNT]: user.noteDetailsCount.toString(),
+      };
+      await this.redis._setHashMain(keyMain, userData);
+      return;
+    } else {
+      await this.redis._setHash(keyMain, KeyHasRedis.USER_DATA, user);
+    }
   }
 }
