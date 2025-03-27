@@ -4,11 +4,13 @@ import { Channel } from 'amqplib';
 import { Helper } from 'packages/utils/helper';
 import {
   ExchangeRabbit,
+  KeyRedis,
   OperationPSQL,
   TableName,
 } from 'packages/common/constant';
 import { NoteDetailsLIstener } from 'packages/interface/queues.interface';
 import { RabbitService } from 'packages/share/services/rabbit.service';
+import { RedisService } from 'packages/share/services/redis.service';
 
 @Injectable()
 export class NoteDetailsPubSubService implements OnModuleInit {
@@ -18,6 +20,7 @@ export class NoteDetailsPubSubService implements OnModuleInit {
   constructor(
     private rabbit: RabbitService,
     private readonly elasticsearchService: ElasticsearchService,
+    private readonly redis: RedisService,
   ) {}
 
   async onModuleInit() {
@@ -50,6 +53,16 @@ export class NoteDetailsPubSubService implements OnModuleInit {
           if (!payload) {
             this.channel.nack(msg, false, false);
             return;
+          }
+          const content: string = await this.redis._getString(
+            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
+          );
+          if (!content) {
+            Logger.error('EMPTY_CONTENT', payload.id);
+            throw new Error(`EMPTY_CONTENT_${payload.id}`);
+          }
+          if (payload.new_data) {
+            payload.new_data.content = content;
           }
           await this.processMessage(payload);
           this.channel.ack(msg);
@@ -96,6 +109,7 @@ export class NoteDetailsPubSubService implements OnModuleInit {
       );
     }
     if (payload.operation === OperationPSQL.DELETE && payload.id) {
+      await this.redis._del(`${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`);
       await this.elasticsearchService.deleteData(
         TableName.NOTE_DETAILS,
         payload.id.toString(),

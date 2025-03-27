@@ -5,7 +5,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import {
-  KeyRedis,
   OperationPSQL,
   TableName,
   ValueListener,
@@ -17,8 +16,6 @@ import { NoteDetailsPubSubService } from './noteDetailsPubSubService';
 import { NoteDetailsLIstener } from 'packages/interface/queues.interface';
 import { NoteDetailType } from '@prisma/client';
 import { NoteDetailQueueTTLService } from './noteDetailsQueueTTL.service';
-import { RedisService } from 'packages/share/services/redis.service';
-
 @Injectable()
 export class NoteDetailsListenerService
   implements OnModuleInit, OnModuleDestroy
@@ -29,7 +26,6 @@ export class NoteDetailsListenerService
   constructor(
     private noteDetailsPubSubService: NoteDetailsPubSubService,
     private noteDetailQueueTTLService: NoteDetailQueueTTLService,
-    private readonly redis: RedisService,
   ) {
     this.client = new Client({
       user: config.PSQL.USER,
@@ -60,25 +56,6 @@ export class NoteDetailsListenerService
         if (!payload) return;
         if (!Object.values(OperationPSQL).includes(payload.operation)) return;
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
-
-        if (payload.operation !== OperationPSQL.DELETE) {
-          const content: string = await this.redis._getString(
-            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
-          );
-          if (!content) {
-            console.log(payload.id);
-            return;
-          }
-          if (payload.new_data) {
-            payload.new_data.content = content;
-          }
-        }
-
-        if (payload.operation === OperationPSQL.DELETE) {
-          await this.redis._del(
-            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
-          );
-        }
 
         if (
           payload.new_data &&

@@ -26,19 +26,18 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
 
   async PublishQueueDelay(body: NoteDetails, operation: OperationPSQL) {
     const delayQueue = `${ExchangeRabbit.SCHEDULE_DELAY_QUEUE}_${body.id}`;
+    const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${body.id}`;
     if (operation === OperationPSQL.DELETE && body.id) {
-      await this.deleteQueue(delayQueue);
+      await this.deleteQueue(delayQueue, mainKey);
       return;
     }
-    const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${body.id}`;
     const isProcessed = await this.markScheduleId(mainKey);
     if (isProcessed) {
-      await this.deleteQueue(delayQueue);
+      await this.deleteQueue(delayQueue, mainKey);
     }
     const timeCurrent = new Date().getTime();
     const scheduleTime = new Date(body.scheduleTime).getTime();
     const delayTime = scheduleTime - timeCurrent;
-    console.log(mainKey, delayTime);
     if (delayTime < 1000 && delayTime > 0) {
       await this.nodeMailerService.sendSchedule(body);
       await this.redis._del(mainKey);
@@ -79,15 +78,22 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
     this.channel.consume(ExchangeRabbit.SCHEDULE_MAIN_QUEUE, async (msg) => {
       if (msg !== null) {
         try {
-          const content: NoteDetails = Helper.parseJson(msg.content.toString());
-          const delayQueue = `${ExchangeRabbit.SCHEDULE_DELAY_QUEUE}_${content.id}`;
-          const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${content.id}`;
+          const payload: NoteDetails = Helper.parseJson(msg.content.toString());
+          const content: string = await this.redis._getString(
+            `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
+          );
+          if (!content) {
+            throw new Error(`EMPTY_CONTENT_${payload.id}`);
+          }
+          payload.content = content;
+          const delayQueue = `${ExchangeRabbit.SCHEDULE_DELAY_QUEUE}_${payload.id}`;
+          const mainKey = `${KeyRedis.NOTEDETAIL_SCHEDULE}_${payload.id}`;
           const isProcessed = await this.markScheduleId(delayQueue);
           if (isProcessed) {
             this.channel.ack(msg);
             return;
           }
-          await this.nodeMailerService.sendSchedule(content);
+          await this.nodeMailerService.sendSchedule(payload);
           this.channel.ack(msg);
           await this.channel.deleteQueue(delayQueue);
           await this.redis._del(delayQueue);
@@ -108,12 +114,13 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
     return isIdExist !== 1;
   }
 
-  private async deleteQueue(queue: string) {
+  private async deleteQueue(queue: string, mainKey: string) {
     try {
       await this.channel.deleteQueue(queue, {
         ifUnused: false,
         ifEmpty: false,
       });
+      await this.redis._del(mainKey);
     } catch (error) {
       Logger.error(error);
     }
