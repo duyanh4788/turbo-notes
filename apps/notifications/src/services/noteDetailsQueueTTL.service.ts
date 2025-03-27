@@ -134,21 +134,13 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
   }
 
   private async bindMainQueue() {
-    const mainQueueOK = await this.channel
-      .checkQueue(ExchangeRabbit.SCHEDULE_MAIN_QUEUE)
-      .catch(() => null);
-    if (
-      !mainQueueOK ||
-      mainQueueOK.queue !== ExchangeRabbit.SCHEDULE_MAIN_QUEUE
-    ) {
-      await this.channel.assertQueue(ExchangeRabbit.SCHEDULE_MAIN_QUEUE, {
-        durable: true,
-      });
-      await this.channel.bindQueue(
-        ExchangeRabbit.SCHEDULE_MAIN_QUEUE,
-        ExchangeRabbit.SCHEDULE_MAIN_EX,
-        ExchangeRabbit.SCHEDULE_MAIN_QUEUE,
-      );
-    }
+    await this.channel.assertQueue(ExchangeRabbit.SCHEDULE_MAIN_QUEUE, {
+      durable: true,
+    });
+    await this.channel.bindQueue(
+      ExchangeRabbit.SCHEDULE_MAIN_QUEUE,
+      ExchangeRabbit.SCHEDULE_MAIN_EX,
+      ExchangeRabbit.SCHEDULE_MAIN_QUEUE,
+    );
   }
 }

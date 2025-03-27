@@ -13,6 +13,7 @@ BEGIN
         'new_data', json_build_object(
             'id', COALESCE(NEW.id, OLD.id),
             'type', COALESCE(NEW.type, OLD.type),
+            'title', COALESCE(NEW.title, OLD.title),
             'schedule_time', COALESCE(NEW.schedule_time, OLD.schedule_time),
             'user_id', COALESCE(NEW.user_id, OLD.user_id)
         )
