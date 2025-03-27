@@ -57,7 +57,6 @@ export class NoteDetailsListenerService
 
       this.client.on('notification', async (msg) => {
         const payload: NoteDetailsLIstener = Helper.parseJson(msg?.payload);
-        console.log(payload.id);
         if (!payload) return;
         if (!Object.values(OperationPSQL).includes(payload.operation)) return;
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
@@ -66,7 +65,10 @@ export class NoteDetailsListenerService
           const content: string = await this.redis._getString(
             `${KeyRedis.CONTENT_NOTE_DETAIL}_${payload.id}`,
           );
-          if (!content) return;
+          if (!content) {
+            console.log(payload.id);
+            return;
+          }
           if (payload.new_data) {
             payload.new_data.content = content;
           }
