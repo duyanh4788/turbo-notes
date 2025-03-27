@@ -38,8 +38,8 @@ export class NoteDetailQueueTTLService implements OnModuleInit {
     const timeCurrent = new Date().getTime();
     const scheduleTime = new Date(body.scheduleTime).getTime();
     const delayTime = scheduleTime - timeCurrent;
-
-    if (delayTime < 1000) {
+    console.log(mainKey, delayTime);
+    if (delayTime < 1000 && delayTime > 0) {
       await this.nodeMailerService.sendSchedule(body);
       await this.redis._del(mainKey);
       return;

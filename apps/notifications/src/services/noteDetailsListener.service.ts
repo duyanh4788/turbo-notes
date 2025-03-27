@@ -57,6 +57,7 @@ export class NoteDetailsListenerService
 
       this.client.on('notification', async (msg) => {
         const payload: NoteDetailsLIstener = Helper.parseJson(msg?.payload);
+        console.log(payload.id);
         if (!payload) return;
         if (!Object.values(OperationPSQL).includes(payload.operation)) return;
         if (!payload.table || payload.table !== TableName.NOTE_DETAILS) return;
