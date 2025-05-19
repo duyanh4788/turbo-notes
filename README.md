@@ -34,6 +34,36 @@ The project utilizes the following technologies:
 The build and deployment process is automated using **GitHub Actions CI/CD** and **Docker** on **Server linux**.
 ![Flow 03](https://storage.googleapis.com/4p_backup_bucket/cms_content_media/flow06-1740465581249.png)
 
+## 🔧 Management System Overview
+
+### 1. 📊 PG Hero – Monitor PostgreSQL Queries  
+- **URL:** [PG Hero - Notes Queries](http://118.69.68.212:8089/notes/queries)  
+- **Credentials:**  
+Username: dev
+Password: dev@123456
+- **Preview:**  
+![PG Hero](https://storage.googleapis.com/4p_backup_bucket/mms_content_media/Screenshot%20from%202025-05-19%2013-36-39-1747636610454.png)
+
+---
+
+### 2. 📨 RabbitMQ – Queue Management  
+- **URL:** [RabbitMQ Management Console](http://118.69.68.212:15682/#/queues)  
+- **Credentials:**  
+Username: dev
+Password: 4ef0ndj0objssfdgsmdmp4kr3g2si5qj
+- **Preview:**  
+![RabbitMQ](https://storage.googleapis.com/4p_backup_bucket/mms_content_media/Screenshot%20from%202025-05-19%2013-35-30-1747636554233.png)
+
+---
+
+### 3. 📈 Zabbix – System Monitoring  
+- **URL:** [Zabbix Dashboard](http://118.69.68.212:8088/zabbix.php?action=dashboard.view)  
+- **Credentials:**  
+Username: Admin
+Password: zabbix
+- **Preview:**  
+![Zabbix](https://storage.googleapis.com/4p_backup_bucket/mms_content_media/Screenshot%20from%202025-05-19%2013-37-22-1747636653565.png)
+
 ### Installation and Running Instructions
 
 1. **Clone the repository**:
